@@ -10,21 +10,18 @@ public class Treatment implements Serializable {
     private String treatmentName;
     private String description;
     private double treatmentCost;
-    private double consultationFee;
 
     // Default Constructor
     public Treatment() {
     }
 
     public Treatment(int treatmentId, String treatmentName,
-                     String description, double treatmentCost,
-                     double consultationFee) {
+                     String description, double treatmentCost) {
 
         this.treatmentId = treatmentId;
         this.treatmentName = treatmentName;
         this.description = description;
         this.treatmentCost = treatmentCost;
-        this.consultationFee = consultationFee;
     }
 
     // Getters and Setters
@@ -60,19 +57,6 @@ public class Treatment implements Serializable {
         this.treatmentCost = treatmentCost;
     }
 
-    public double getConsultationFee() {
-        return consultationFee;
-    }
-
-    public void setConsultationFee(double consultationFee) {
-        this.consultationFee = consultationFee;
-    }
-
-    // Calculate Total Cost
-    public double getTotalCost() {
-        return treatmentCost + consultationFee;
-    }
-
     @Override
     public String toString() {
         return "Treatment{" +
@@ -80,7 +64,6 @@ public class Treatment implements Serializable {
                 ", treatmentName='" + treatmentName + '\'' +
                 ", description='" + description + '\'' +
                 ", treatmentCost=" + treatmentCost +
-                ", consultationFee=" + consultationFee +
                 '}';
     }
 }
