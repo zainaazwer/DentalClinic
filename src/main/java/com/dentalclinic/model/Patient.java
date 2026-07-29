@@ -15,7 +15,6 @@ public class Patient implements Serializable {
     public Patient() {
     }
 
-    // Parameterized Constructor
     public Patient(int patientId, String fullName, String address, String phoneNumber) {
         this.patientId = patientId;
         this.fullName = fullName;
@@ -24,7 +23,6 @@ public class Patient implements Serializable {
     }
 
     // Getters and Setters
-
     public int getPatientId() {
         return patientId;
     }
