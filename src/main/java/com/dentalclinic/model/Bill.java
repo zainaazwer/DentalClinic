@@ -8,11 +8,10 @@ public class Bill implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Primary Key and Identification
     private int billId;
     private String billDate;
 
-    // Appointment Reference
+    // Appointment
     private int appointmentId;
 
     // Patient Information
@@ -35,14 +34,11 @@ public class Bill implements Serializable {
     private String paymentMethod;
     private String paymentDate;
 
-    // Payment Constants
     public static final String PAYMENT_CASH = "CASH";
     public static final String PAYMENT_CARD = "CARD";
 
-    // Default Consultation Fee
     public static final double DEFAULT_CONSULTATION_FEE = 50.00;
 
-    // Default Constructor
     public Bill() {
         this.billDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 .format(new Date());
@@ -53,7 +49,6 @@ public class Bill implements Serializable {
         this.amountPaid = 0.00;
     }
 
-    // Parameterized Constructor
     public Bill(int appointmentId, int billId) {
         this();
 
@@ -62,20 +57,17 @@ public class Bill implements Serializable {
     }
 
     // Business Methods
-
     // Calculate total bill amount
     public double calculateTotal() {
         this.totalAmount = treatmentCost + consultationFee;
         return this.totalAmount;
     }
 
-    // Calculate remaining balance
     public double calculateBalance() {
         return totalAmount - amountPaid;
     }
 
     // Getters and Setters
-
     public int getBillId() {
         return billId;
     }
@@ -195,8 +187,6 @@ public class Bill implements Serializable {
     public void setPaymentDate(String paymentDate) {
         this.paymentDate = paymentDate;
     }
-
-    // Helper Methods
 
     public String getPaymentMethodDisplay() {
 
