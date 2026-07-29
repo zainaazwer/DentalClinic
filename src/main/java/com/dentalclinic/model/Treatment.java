@@ -16,7 +16,6 @@ public class Treatment implements Serializable {
     public Treatment() {
     }
 
-    // Parameterized Constructor
     public Treatment(int treatmentId, String treatmentName,
                      String description, double treatmentCost,
                      double consultationFee) {
@@ -29,7 +28,6 @@ public class Treatment implements Serializable {
     }
 
     // Getters and Setters
-
     public int getTreatmentId() {
         return treatmentId;
     }
