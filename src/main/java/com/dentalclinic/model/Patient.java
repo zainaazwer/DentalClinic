@@ -3,15 +3,19 @@ package com.dentalclinic.model;
 import java.io.Serializable;
 
 public class Patient implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     private int patientId;
     private String fullName;
     private String address;
     private String phoneNumber;
 
-    public Patient() {}
+    // Default Constructor
+    public Patient() {
+    }
 
+    // Parameterized Constructor
     public Patient(int patientId, String fullName, String address, String phoneNumber) {
         this.patientId = patientId;
         this.fullName = fullName;
@@ -20,36 +24,46 @@ public class Patient implements Serializable {
     }
 
     // Getters and Setters
+
     public int getPatientId() {
-    	return patientId;
+        return patientId;
     }
-    
+
     public void setPatientId(int patientId) {
-    	this.patientId = patientId;
+        this.patientId = patientId;
     }
-    
+
     public String getFullName() {
-    	return fullName;
+        return fullName;
     }
-    
+
     public void setFullName(String fullName) {
-    	this.fullName = fullName;
+        this.fullName = fullName;
     }
-    
+
     public String getAddress() {
-    	return address;
+        return address;
     }
-    
+
     public void setAddress(String address) {
-    	this.address = address;
+        this.address = address;
     }
-    
-    public String getContactNumber() {
-    	return contactNumber; 
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
-    
-    public void setPhoneNumber(String phoneNumber) { 
-    	this.phoneNumber = phoneNumber; 
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "patientId=" + patientId +
+                ", fullName='" + fullName + '\'' +
+                ", address='" + address + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
 }
