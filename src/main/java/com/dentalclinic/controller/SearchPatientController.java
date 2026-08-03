@@ -58,4 +58,4 @@ public class SearchPatientController extends HttpServlet {
                    .forward(request, response);
         }
     }
-}
+} 
