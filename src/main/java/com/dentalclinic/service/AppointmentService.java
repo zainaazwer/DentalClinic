@@ -67,7 +67,6 @@ public class AppointmentService {
         return appointmentDAO.getAllAppointments();
     }
 
-
     // Get patient by ID
     public Patient getPatientById(int patientId) throws SQLException {
 
@@ -77,7 +76,6 @@ public class AppointmentService {
 
         return patientDAO.getPatientById(patientId);
     }
-
 
     // Create patient
     public boolean createPatient(Patient patient) throws SQLException {
@@ -91,13 +89,11 @@ public class AppointmentService {
         return patientDAO.createPatient(patient);
     }
 
-
     // Get all treatments
     public List<Treatment> getAllTreatments() throws SQLException {
 
         return treatmentDAO.getAllTreatments();
     }
-
 
     // Get treatment by ID
     public Treatment getTreatmentById(int treatmentId) throws SQLException {

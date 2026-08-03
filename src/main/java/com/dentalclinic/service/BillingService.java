@@ -16,12 +16,10 @@ public class BillingService {
 
     private static final double CONSULTATION_FEE = 50.00;
 
-
     public BillingService() {
         billDAO = new BillDAO();
         appointmentService = new AppointmentService();
     }
-
 
     // Calculate bill
     public Bill calculateBill(Appointment appointment, Treatment treatment, Patient patient) {
@@ -59,11 +57,9 @@ public class BillingService {
         bill.setAmountPaid(0.00);
         bill.setPaymentMethod("Pending");
         bill.setPaymentDate(LocalDate.now().toString());
-
-
+        
         return bill;
     }
-
 
     // Save bill
     public Bill saveBill(Bill bill) throws SQLException {
@@ -77,7 +73,6 @@ public class BillingService {
         return success ? bill : null;
     }
 
-
     // Get bill by ID
     public Bill getBillById(int billId) throws SQLException {
 
@@ -88,13 +83,11 @@ public class BillingService {
         return billDAO.getBillById(billId);
     }
 
-
     // Get all bills
     public java.util.List<Bill> getAllBills() throws SQLException {
 
         return billDAO.getAllBills();
     }
-
 
     // Update payment
     public boolean updatePayment(int billId, double amountPaid, String paymentMethod) 

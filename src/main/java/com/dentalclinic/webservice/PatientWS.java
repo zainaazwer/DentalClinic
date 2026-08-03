@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-
 @Path("/patients")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -23,7 +22,6 @@ public class PatientWS {
     public PatientWS() {
         patientService = PatientService.getInstance();
     }
-
 
     // Get all patients
     @GET
@@ -45,8 +43,6 @@ public class PatientWS {
         }
     }
 
-
-
     // Search patient by ID
     @GET
     @Path("/{id}")
@@ -63,20 +59,16 @@ public class PatientWS {
                 return Response.ok(patient).build();
             }
 
-
             return Response
                     .status(404)
                     .entity("Patient not found")
                     .build();
-
 
         } catch(SQLException e) {
 
             return Response.status(500).build();
         }
     }
-
-
 
     // Register patient
     @POST
@@ -87,7 +79,6 @@ public class PatientWS {
             boolean result =
                     patientService.registerPatient(patient);
 
-
             if(result) {
 
                 return Response
@@ -96,12 +87,10 @@ public class PatientWS {
                         .build();
             }
 
-
             return Response
                     .status(400)
                     .entity("Invalid patient details")
                     .build();
-
 
         } catch(SQLException e) {
 
