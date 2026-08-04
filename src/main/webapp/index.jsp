@@ -162,7 +162,7 @@
         Redirecting to Login Page
     </p>
 
-    <a href="<%= contextPath %>/login" class="btn">
+    <a href="<%= contextPath %>/Login" class="btn">
         Continue to Login
     </a>
 
@@ -175,7 +175,7 @@
 <script>
     // Ensure redirect happens even if meta refresh fails
     setTimeout(function() {
-        window.location.href = '<%= contextPath %>/login';
+        window.location.href = '<%= contextPath %>/Login';
     }, 3000);
 </script>
 
