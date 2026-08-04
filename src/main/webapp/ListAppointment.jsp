@@ -112,6 +112,7 @@ Refresh Appointment List
 </form>
 
 <%
+@SuppressWarnings("unchecked")
 List<Appointment> appointments =
 (List<Appointment>) request.getAttribute("appointments");
 
