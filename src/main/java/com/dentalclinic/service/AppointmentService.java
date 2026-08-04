@@ -16,6 +16,7 @@ public class AppointmentService {
     private PatientDAO patientDAO;
     private TreatmentDAO treatmentDAO;
 
+
     public AppointmentService() {
         appointmentDAO = new AppointmentDAO();
         patientDAO = new PatientDAO();
@@ -25,6 +26,10 @@ public class AppointmentService {
 
     // Register Appointment
     public boolean registerAppointment(Appointment appointment) throws SQLException {
+
+        if (appointment == null) {
+            return false;
+        }
 
         if (appointment.getPatientId() <= 0 ||
             appointment.getAppointmentDate() == null ||
@@ -67,7 +72,8 @@ public class AppointmentService {
         return appointmentDAO.getAllAppointments();
     }
 
-    // Get patient by ID
+
+    // Get patient details
     public Patient getPatientById(int patientId) throws SQLException {
 
         if (patientId <= 0) {
@@ -77,10 +83,12 @@ public class AppointmentService {
         return patientDAO.getPatientById(patientId);
     }
 
+
     // Create patient
     public boolean createPatient(Patient patient) throws SQLException {
 
-        if (patient.getFullName() == null ||
+        if (patient == null ||
+            patient.getFullName() == null ||
             patient.getFullName().trim().isEmpty()) {
 
             return false;
@@ -89,11 +97,13 @@ public class AppointmentService {
         return patientDAO.createPatient(patient);
     }
 
+
     // Get all treatments
     public List<Treatment> getAllTreatments() throws SQLException {
 
         return treatmentDAO.getAllTreatments();
     }
+
 
     // Get treatment by ID
     public Treatment getTreatmentById(int treatmentId) throws SQLException {
