@@ -1,12 +1,12 @@
 package com.dentalclinic.webservice;
 
-import com.dentalclinic.model.Bill;
+import com.dentalclinic.model.Bill; 
 import com.dentalclinic.service.BillingService;
 
 
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 
 import java.sql.SQLException;

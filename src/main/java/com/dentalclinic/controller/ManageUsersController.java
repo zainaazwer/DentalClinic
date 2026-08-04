@@ -1,14 +1,14 @@
 package com.dentalclinic.controller;
 
-import com.dentalclinic.dao.UserDAO;
+import com.dentalclinic.dao.UserDAO; 
 import com.dentalclinic.model.User;
 
 import java.io.IOException;
 import java.util.List;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 @WebServlet("/ManageUsers")
 public class ManageUsersController extends HttpServlet {

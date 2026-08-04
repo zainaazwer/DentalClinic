@@ -13,7 +13,7 @@
 %>
 
 <!-- Redirect to Login page after 2 seconds -->
-<meta http-equiv="refresh" content="2;url=<%= contextPath %>/login">
+<meta http-equiv="refresh" content="2;url=<%= contextPath %>/Login">
 
 <style>
     * {

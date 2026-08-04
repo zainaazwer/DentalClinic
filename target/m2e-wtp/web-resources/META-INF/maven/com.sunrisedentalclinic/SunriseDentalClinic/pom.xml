@@ -15,19 +15,19 @@
 
     <dependencies>
 
-        <!-- Jakarta Servlet API -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-            <scope>provided</scope>
-        </dependency>
+        <!-- Javax Servlet API -->
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.1</version>
+    <scope>provided</scope>
+</dependency>
         
         <!-- REST Web Service API -->
 <dependency>
-    <groupId>jakarta.ws.rs</groupId>
-    <artifactId>jakarta.ws.rs-api</artifactId>
-    <version>3.1.0</version>
+    <groupId>javax.ws.rs</groupId>
+    <artifactId>javax.ws.rs-api</artifactId>
+    <version>2.1.1</version>
     <scope>provided</scope>
 </dependency>
 
@@ -49,7 +49,7 @@
     </dependencies>
 
     <build>
-        <finalName>sunrise-dental-clinic</finalName>
+        <finalName>sunrisedentalclinic</finalName>
     </build>
 
 </project>

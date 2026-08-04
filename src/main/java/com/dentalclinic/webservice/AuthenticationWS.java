@@ -1,10 +1,10 @@
 package com.dentalclinic.webservice;
 
-import com.dentalclinic.model.User;
+import com.dentalclinic.model.User; 
 import com.dentalclinic.service.AuthenticationService;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/authentication")
 @Produces(MediaType.APPLICATION_JSON)
@@ -20,7 +20,7 @@ public class AuthenticationWS {
     }
 
     @POST
-    @Path("/login")
+    @Path("/Login")
     public Response login(User user){
 
 
