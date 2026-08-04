@@ -4,6 +4,7 @@ import com.dentalclinic.model.Appointment;
 import com.dentalclinic.service.AppointmentService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -18,7 +19,7 @@ public class ViewAppointmentController extends HttpServlet {
     private AppointmentService appointmentService;
 
     @Override
-    public void init() {
+    public void init() throws ServletException {
         appointmentService = new AppointmentService();
     }
 
@@ -34,13 +35,25 @@ public class ViewAppointmentController extends HttpServlet {
 
             request.setAttribute("appointments", appointments);
 
-            request.getRequestDispatcher("viewAppointments.jsp")
-                   .forward(request, response);
+        } catch (SQLException e) {
 
-        } catch (Exception e) {
+            request.setAttribute("error",
+                    "Unable to retrieve appointments.");
 
-            throw new ServletException(e);
-
+            e.printStackTrace();
         }
+
+        request.getRequestDispatcher("/viewAppointments.jsp")
+               .forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
+
+        doGet(request, response);
+
+    }
+
 }
