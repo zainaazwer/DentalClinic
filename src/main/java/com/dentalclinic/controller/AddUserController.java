@@ -16,7 +16,6 @@ public class AddUserController extends HttpServlet {
 
     private UserDAO userDAO;
 
-
     @Override
     public void init() {
 
@@ -24,16 +23,12 @@ public class AddUserController extends HttpServlet {
 
     }
 
-
-
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
 
-
         HttpSession session = request.getSession(false);
-
 
         // Check login
         if(session == null || session.getAttribute("user") == null){
@@ -43,10 +38,8 @@ public class AddUserController extends HttpServlet {
 
         }
 
-
         User loggedUser = 
                 (User) session.getAttribute("user");
-
 
 
         // Admin only
@@ -57,27 +50,18 @@ public class AddUserController extends HttpServlet {
 
         }
 
-
-
         try {
-
-
             String fullName =
                     request.getParameter("fullName");
-
 
             String username =
                     request.getParameter("username");
 
-
             String password =
                     request.getParameter("password");
 
-
             String role =
                     request.getParameter("role");
-
-
 
             User user = new User();
 
@@ -91,50 +75,35 @@ public class AddUserController extends HttpServlet {
             user.setRole(role);
 
 
-
             boolean result =
                     userDAO.addUser(user);
 
-
-
             if(result){
-
 
                 request.setAttribute("success",
                         "User added successfully.");
 
-
             }else{
-
 
                 request.setAttribute("error",
                         "Unable to add user.");
-
-
             }
-
-
 
             request.getRequestDispatcher("addUser.jsp")
                    .forward(request, response);
 
 
-
         } catch(Exception e){
-
 
             e.printStackTrace();
 
-
             request.setAttribute("error",
                     "An error occurred while adding user.");
-
 
             request.getRequestDispatcher("addUser.jsp")
                    .forward(request, response);
 
         }
-
 
     }
 
