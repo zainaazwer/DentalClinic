@@ -4,6 +4,7 @@ import com.dentalclinic.model.Appointment;
 import com.dentalclinic.service.AppointmentService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +20,7 @@ public class AddAppointmentController extends HttpServlet {
     private AppointmentService appointmentService;
 
     @Override
-    public void init() {
+    public void init() throws ServletException {
         appointmentService = new AppointmentService();
     }
 
@@ -28,7 +29,7 @@ public class AddAppointmentController extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.getRequestDispatcher("addAppointment.jsp")
+        request.getRequestDispatcher("/addAppointment.jsp")
                .forward(request, response);
     }
 
@@ -44,46 +45,54 @@ public class AddAppointmentController extends HttpServlet {
             appointment.setPatientId(
                     Integer.parseInt(request.getParameter("patientId")));
 
-            appointment.setAppointmentDate(
-                    request.getParameter("appointmentDate"));
-
-            appointment.setAppointmentTime(
-                    request.getParameter("appointmentTime"));
-
-            appointment.setTreatmentType(
-                    request.getParameter("treatmentType"));
-
-            // Optional
             appointment.setPatientName(
                     request.getParameter("patientName"));
 
             appointment.setDentistName(
                     request.getParameter("dentistName"));
 
+            appointment.setTreatmentType(
+                    request.getParameter("treatmentType"));
+
+            appointment.setAppointmentDate(
+                    request.getParameter("appointmentDate"));
+
+            appointment.setAppointmentTime(
+                    request.getParameter("appointmentTime"));
+
             boolean success =
                     appointmentService.registerAppointment(appointment);
 
             if (success) {
 
-                response.sendRedirect(
-                        "appointmentList.jsp?success=true");
+                request.setAttribute(
+                        "success",
+                        "Appointment registered successfully.");
 
             } else {
 
-                request.setAttribute("error",
+                request.setAttribute(
+                        "error",
                         "Unable to register appointment.");
 
-                request.getRequestDispatcher("addAppointment.jsp")
-                       .forward(request, response);
             }
 
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
 
-            request.setAttribute("error",
-                    "Error: " + e.getMessage());
+            request.setAttribute(
+                    "error",
+                    "Patient ID must be a valid number.");
 
-            request.getRequestDispatcher("addAppointment.jsp")
-                   .forward(request, response);
+        } catch (SQLException e) {
+
+            request.setAttribute(
+                    "error",
+                    "Database error while registering appointment.");
+
+            e.printStackTrace();
         }
+
+        request.getRequestDispatcher("/addAppointment.jsp")
+               .forward(request, response);
     }
 }
