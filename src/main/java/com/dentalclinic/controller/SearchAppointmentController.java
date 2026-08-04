@@ -4,6 +4,7 @@ import com.dentalclinic.model.Appointment;
 import com.dentalclinic.service.AppointmentService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,8 +18,53 @@ public class SearchAppointmentController extends HttpServlet {
     private AppointmentService appointmentService;
 
     @Override
-    public void init() {
+    public void init() throws ServletException {
         appointmentService = new AppointmentService();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String appointmentIdStr = request.getParameter("appointmentId");
+
+        try {
+
+            if (appointmentIdStr != null && !appointmentIdStr.trim().isEmpty()) {
+
+                int appointmentId = Integer.parseInt(appointmentIdStr);
+
+                Appointment appointment =
+                        appointmentService.getAppointmentById(appointmentId);
+
+                if (appointment != null) {
+
+                    request.setAttribute("appointment", appointment);
+
+                } else {
+
+                    request.setAttribute("error",
+                            "Appointment not found.");
+
+                }
+            }
+
+        } catch (NumberFormatException e) {
+
+            request.setAttribute("error",
+                    "Invalid Appointment ID.");
+
+        } catch (SQLException e) {
+
+            request.setAttribute("error",
+                    "Database error while searching appointment.");
+
+            e.printStackTrace();
+        }
+
+        request.getRequestDispatcher("/searchAppointment.jsp")
+               .forward(request, response);
     }
 
     @Override
@@ -26,26 +72,8 @@ public class SearchAppointmentController extends HttpServlet {
                           HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
+        doGet(request, response);
 
-            int appointmentId =
-                    Integer.parseInt(request.getParameter("appointmentId"));
-
-            Appointment appointment =
-                    appointmentService.getAppointmentById(appointmentId);
-
-            request.setAttribute("appointment", appointment);
-
-            request.getRequestDispatcher("searchAppointment.jsp")
-                   .forward(request, response);
-
-        } catch (Exception e) {
-
-            request.setAttribute("error",
-                    "Appointment not found.");
-
-            request.getRequestDispatcher("searchAppointment.jsp")
-                   .forward(request, response);
-        }
     }
+
 }
