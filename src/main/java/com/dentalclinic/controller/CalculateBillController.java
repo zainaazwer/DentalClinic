@@ -1,8 +1,11 @@
 package com.dentalclinic.controller;
 
+import com.dentalclinic.model.Appointment;
 import com.dentalclinic.model.Bill;
+import com.dentalclinic.service.AppointmentService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,70 +16,128 @@ public class CalculateBillController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    private AppointmentService appointmentService;
+
+    @Override
+    public void init() throws ServletException {
+        appointmentService = new AppointmentService();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.getRequestDispatcher("/calculateBill.jsp")
+               .forward(request, response);
+    }
+
+
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
 
+
         try {
+
+            int appointmentId =
+                    Integer.parseInt(request.getParameter("appointmentId"));
+
+
+            Appointment appointment =
+                    appointmentService.getAppointmentById(appointmentId);
+
+
+            if (appointment == null) {
+
+                request.setAttribute("error",
+                        "Appointment not found.");
+
+                request.getRequestDispatcher("/calculateBill.jsp")
+                       .forward(request, response);
+
+                return;
+            }
+
 
             Bill bill = new Bill();
 
+
             // Appointment details
             bill.setAppointmentId(
-                    Integer.parseInt(request.getParameter("appointmentId")));
+                    appointment.getAppointmentId());
 
-            // Patient details
+
             bill.setPatientId(
-                    Integer.parseInt(request.getParameter("patientId")));
+                    appointment.getPatientId());
+
 
             bill.setPatientName(
-                    request.getParameter("patientName"));
-
-            bill.setPatientNumber(
-                    request.getParameter("patientNumber"));
-
-            bill.setPatientContact(
-                    request.getParameter("patientContact"));
+                    appointment.getPatientName());
 
 
-            // Treatment details
             bill.setTreatmentType(
-                    request.getParameter("treatmentType"));
-
-            bill.setTreatmentDescription(
-                    request.getParameter("treatmentDescription"));
+                    appointment.getTreatmentType());
 
 
-            // Cost calculation
-            double treatmentCost =
-                    Double.parseDouble(
-                    request.getParameter("treatmentCost"));
+            /*
+             * Treatment cost can later be retrieved
+             * from Treatment table.
+             * Temporary values can be changed.
+             */
+            double treatmentCost = 0.00;
+
+
+            if ("Cleaning".equalsIgnoreCase(
+                    appointment.getTreatmentType())) {
+
+                treatmentCost = 100.00;
+
+            } else if ("Filling".equalsIgnoreCase(
+                    appointment.getTreatmentType())) {
+
+                treatmentCost = 150.00;
+
+            } else if ("Extraction".equalsIgnoreCase(
+                    appointment.getTreatmentType())) {
+
+                treatmentCost = 200.00;
+
+            }
+
 
             bill.setTreatmentCost(treatmentCost);
 
+
+            // Consultation fee
             bill.setConsultationFee(
                     Bill.DEFAULT_CONSULTATION_FEE);
 
+
+            // Calculate total
             bill.calculateTotal();
 
 
-            // Store bill temporarily
-            HttpSession session = request.getSession();
-
-            session.setAttribute("bill", bill);
+            request.setAttribute("bill", bill);
 
 
-            response.sendRedirect("printBill");
-
-
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
 
             request.setAttribute("error",
-                    "Unable to calculate bill: " + e.getMessage());
+                    "Invalid Appointment ID.");
 
-            request.getRequestDispatcher("calculateBill.jsp")
-                   .forward(request, response);
+
+        } catch (SQLException e) {
+
+            request.setAttribute("error",
+                    "Database error while calculating bill.");
+
+            e.printStackTrace();
         }
+
+
+        request.getRequestDispatcher("/calculateBill.jsp")
+               .forward(request, response);
     }
 }

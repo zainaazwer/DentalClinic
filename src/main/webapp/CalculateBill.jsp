@@ -147,7 +147,7 @@ button:hover{
        name="treatmentDescription"
        required>
 
-<label>Treatment Cost ($)</label>
+<label>Treatment Cost (LKR)</label>
 <input type="number"
        step="0.01"
        name="treatmentCost"
@@ -160,7 +160,7 @@ button:hover{
        value="50.00"
        required>
 
-<label>Amount Paid ($)</label>
+<label>Amount Paid (LKR)</label>
 <input type="number"
        step="0.01"
        name="amountPaid"
