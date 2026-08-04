@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
 <%@ page import="com.dentalclinic.model.Patient" %>
 
 <!DOCTYPE html>
@@ -11,7 +10,7 @@
 <style>
 
 body{
-    font-family:Arial, sans-serif;
+    font-family: Arial, sans-serif;
     background:#f4f6f9;
     margin:0;
 }
@@ -38,7 +37,7 @@ label{
     font-weight:bold;
 }
 
-input[type=text]{
+input[type=number]{
     width:70%;
     padding:10px;
     margin:10px 0;
@@ -73,18 +72,15 @@ th{
 
 td{
     padding:10px;
-    border-bottom:1px solid #ddd;
+    border:1px solid #ddd;
     text-align:center;
-}
-
-tr:hover{
-    background:#f1f1f1;
 }
 
 .message{
     text-align:center;
     color:red;
     font-weight:bold;
+    margin-top:20px;
 }
 
 .back{
@@ -106,108 +102,92 @@ tr:hover{
 
 <div class="container">
 
-<div class="card">
+    <div class="card">
 
-<h2>Search Patient</h2>
+        <h2>Search Patient</h2>
 
-<form action="searchPatient" method="get">
+        <form action="searchPatient" method="get">
 
-<label>Enter Patient Name or Phone Number:</label><br>
+            <label>Enter Patient ID:</label><br>
 
-<input type="text"
-       name="keyword"
-       placeholder="Enter name or phone number"
-       required>
+            <input
+                type="number"
+                name="patientId"
+                placeholder="Enter Patient ID"
+                required>
 
-<button type="submit">
-Search
-</button>
+            <button type="submit">
+                Search
+            </button>
 
-</form>
+        </form>
 
-</div>
+    </div>
 
+    <div class="card">
 
-<div class="card">
+        <h2>Patient Details</h2>
 
-<h2>Patient Details</h2>
+        <%
 
-<%
-List<Patient> patients =
-(List<Patient>) request.getAttribute("patients");
+        Patient patient = (Patient) request.getAttribute("patient");
 
-if(patients != null && !patients.isEmpty()){
+        String error = (String) request.getAttribute("error");
 
-%>
+        if(patient != null){
 
-<table>
+        %>
 
-<tr>
-<th>Patient ID</th>
-<th>Name</th>
-<th>Address</th>
-<th>Phone Number</th>
-</tr>
+        <table>
 
+            <tr>
+                <th>Patient ID</th>
+                <th>Full Name</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+            </tr>
 
-<%
-for(Patient patient : patients){
-%>
+            <tr>
 
-<tr>
+                <td><%= patient.getPatientId() %></td>
 
-<td>
-<%= patient.getPatientId() %>
-</td>
+                <td><%= patient.getFullName() %></td>
 
-<td>
-<%= patient.getFullName() %>
-</td>
+                <td><%= patient.getAddress() %></td>
 
-<td>
-<%= patient.getAddress() %>
-</td>
+                <td><%= patient.getPhoneNumber() %></td>
 
-<td>
-<%= patient.getPhoneNumber() %>
-</td>
+            </tr>
 
-</tr>
+        </table>
 
-<%
-}
-%>
+        <%
 
-</table>
+        } else if(error != null){
 
+        %>
 
-<%
-}else if(patients != null){
-%>
+        <p class="message">
+            <%= error %>
+        </p>
 
-<p class="message">
-No patient records found.
-</p>
+        <%
 
-<%
-}
-%>
+        }
 
+        %>
 
-</div>
+    </div>
 
+    <div class="back">
 
-<div class="back">
+        <a href="dashboard.jsp">
+            ← Back to Dashboard
+        </a>
 
-<a href="dashboard.jsp">
-← Back to Dashboard
-</a>
-
-</div>
-
+    </div>
 
 </div>
 
 </body>
-
 </html>
