@@ -8,18 +8,19 @@ import com.dentalclinic.model.Treatment;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class BillingService {
 
     private BillDAO billDAO;
-    private AppointmentService appointmentService;
 
     private static final double CONSULTATION_FEE = 50.00;
 
+
     public BillingService() {
         billDAO = new BillDAO();
-        appointmentService = new AppointmentService();
     }
+
 
     // Calculate bill
     public Bill calculateBill(Appointment appointment, Treatment treatment, Patient patient) {
@@ -27,6 +28,7 @@ public class BillingService {
         if (appointment == null || treatment == null || patient == null) {
             return null;
         }
+
 
         double treatmentCost = treatment.getTreatmentCost();
 
@@ -36,6 +38,7 @@ public class BillingService {
 
 
         Bill bill = new Bill();
+
 
         bill.setBillDate(LocalDate.now().toString());
 
@@ -54,12 +57,15 @@ public class BillingService {
 
         bill.setTotalAmount(totalAmount);
 
+
         bill.setAmountPaid(0.00);
         bill.setPaymentMethod("Pending");
         bill.setPaymentDate(LocalDate.now().toString());
-        
+
+
         return bill;
     }
+
 
     // Save bill
     public Bill saveBill(Bill bill) throws SQLException {
@@ -68,10 +74,12 @@ public class BillingService {
             return null;
         }
 
+
         boolean success = billDAO.createBill(bill);
 
         return success ? bill : null;
     }
+
 
     // Get bill by ID
     public Bill getBillById(int billId) throws SQLException {
@@ -80,23 +88,31 @@ public class BillingService {
             return null;
         }
 
+
         return billDAO.getBillById(billId);
     }
 
+
     // Get all bills
-    public java.util.List<Bill> getAllBills() throws SQLException {
+    public List<Bill> getAllBills() throws SQLException {
 
         return billDAO.getAllBills();
     }
 
+
     // Update payment
-    public boolean updatePayment(int billId, double amountPaid, String paymentMethod) 
+    public boolean updatePayment(int billId, double amountPaid, String paymentMethod)
             throws SQLException {
 
         if (billId <= 0) {
             return false;
         }
 
-        return billDAO.updatePayment(billId, amountPaid, paymentMethod);
+
+        return billDAO.updatePayment(
+                billId,
+                amountPaid,
+                paymentMethod
+        );
     }
 }
