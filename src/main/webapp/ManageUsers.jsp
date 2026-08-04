@@ -283,7 +283,7 @@ Edit
 
 <a class="delete"
 href="deleteUser?id=<%= user.getUserId() %>"
-onclick="return confirm('Are you sure you want to delete this user?');">
+onclick="return confirm ('Are you sure you want to delete this user?');">
 
 Delete
 
