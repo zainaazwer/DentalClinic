@@ -80,12 +80,7 @@ public class CalculateBillController extends HttpServlet {
             bill.setTreatmentType(
                     appointment.getTreatmentType());
 
-
-            /*
-             * Treatment cost can later be retrieved
-             * from Treatment table.
-             * Temporary values can be changed.
-             */
+            
             double treatmentCost = 0.00;
 
 
@@ -120,6 +115,9 @@ public class CalculateBillController extends HttpServlet {
 
 
             request.setAttribute("bill", bill);
+            
+            HttpSession session = request.getSession();
+            session.setAttribute("bill", bill);
 
 
         } catch (NumberFormatException e) {

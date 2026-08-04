@@ -23,27 +23,38 @@ public class PrintBillController extends HttpServlet {
         HttpSession session = request.getSession(false);
 
 
-        if (session != null) {
+        if (session == null ||
+            session.getAttribute("bill") == null) {
 
-            Bill bill = (Bill) session.getAttribute("bill");
+            request.setAttribute("error",
+                    "No bill available to print.");
 
+            request.getRequestDispatcher("/calculateBill.jsp")
+                   .forward(request, response);
 
-            if (bill != null) {
-
-                request.setAttribute("bill", bill);
-
-                request.getRequestDispatcher("printBill.jsp")
-                       .forward(request, response);
-
-                return;
-            }
+            return;
         }
 
 
-        request.setAttribute("error",
-                "No bill available.");
+        Bill bill =
+                (Bill) session.getAttribute("bill");
 
-        request.getRequestDispatcher("calculateBill.jsp")
+
+        request.setAttribute("bill", bill);
+
+
+        request.getRequestDispatcher("/printBill.jsp")
                .forward(request, response);
     }
+
+
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
+
+        doGet(request, response);
+
+    }
+
 }
