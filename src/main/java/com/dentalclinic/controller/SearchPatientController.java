@@ -4,12 +4,11 @@ import com.dentalclinic.model.Patient;
 import com.dentalclinic.service.PatientService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 @WebServlet("/searchPatient")
 public class SearchPatientController extends HttpServlet {
@@ -24,38 +23,51 @@ public class SearchPatientController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
+
+        String patientIdStr = request.getParameter("patientId");
 
         try {
 
-            int patientId = Integer.parseInt(
-                    request.getParameter("patientId"));
+            if (patientIdStr != null && !patientIdStr.trim().isEmpty()) {
 
-            Patient patient =
-                    patientService.getPatientById(patientId);
+                int patientId = Integer.parseInt(patientIdStr);
 
-            if (patient != null) {
+                Patient patient = patientService.getPatientById(patientId);
 
                 request.setAttribute("patient", patient);
 
-            } else {
+                if (patient == null) {
+                    request.setAttribute("error",
+                            "Patient not found.");
+                }
 
-                request.setAttribute("error",
-                        "Patient not found.");
             }
 
-            request.getRequestDispatcher("searchPatient.jsp")
-                   .forward(request, response);
-
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
 
             request.setAttribute("error",
                     "Invalid Patient ID.");
 
-            request.getRequestDispatcher("searchPatient.jsp")
-                   .forward(request, response);
+        } catch (SQLException e) {
+
+            request.setAttribute("error",
+                    "Unable to search patient.");
+
+            e.printStackTrace();
         }
+
+        request.getRequestDispatcher("/searchPatient.jsp")
+               .forward(request, response);
     }
-} 
+
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
+
+        doGet(request, response);
+    }
+}
