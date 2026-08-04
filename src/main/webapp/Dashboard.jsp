@@ -8,15 +8,22 @@
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String role = user.getRole();
 %>
+
 
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
+
 <title>Dashboard | Sunrise Dental Clinic</title>
 
+
 <style>
+
 body{
     margin:0;
     font-family:Arial, Helvetica, sans-serif;
@@ -86,79 +93,176 @@ body{
     margin-top:40px;
     color:#777;
 }
+
 </style>
+
 
 </head>
 
+
 <body>
 
+
 <div class="header">
-    <h1>Sunrise Dental Clinic Management System</h1>
+
+<h1>
+Sunrise Dental Clinic Management System
+</h1>
+
 </div>
+
+
 
 <div class="container">
 
+
+
 <div class="card">
-    <h2>Welcome, <%= user.getFullName() %></h2>
 
-    <p><strong>Username:</strong> <%= user.getUsername() %></p>
+<h2>
+Welcome, <%= user.getFullName() %>
+</h2>
 
-    <p><strong>Role:</strong> <%= user.getRole() %></p>
 
-    <p>You are successfully logged in.</p>
+<p>
+<strong>Username:</strong> 
+<%= user.getUsername() %>
+</p>
+
+
+<p>
+<strong>Role:</strong> 
+<%= user.getRole() %>
+</p>
+
+
+<p>
+You are successfully logged in.
+</p>
+
+
 </div>
 
+
+
+
 <div class="card">
 
-<h2>Menu</h2>
+
+<h2>
+Menu
+</h2>
+
+
 
 <div class="menu">
+
+
+
+<%
+if("Administrator".equals(role)){
+%>
+
+
+<a href="manageUsers">
+Manage Users
+</a>
+
+
+<a href="listAppointment">
+View Appointments
+</a>
+
+
+<%
+}
+%>
+
+
+
+
+<%
+if("Receptionist".equals(role)){
+%>
+
+
 
 <a href="addPatient.jsp">
 Add Patient
 </a>
 
+
 <a href="searchPatient.jsp">
 Search Patient
 </a>
+
 
 <a href="addAppointment.jsp">
 Register Appointment
 </a>
 
-<a href="viewAppointments.jsp">
+
+<a href="listAppointment">
 View Appointments
 </a>
+
 
 <a href="searchAppointment.jsp">
 Search Appointment
 </a>
 
+
 <a href="calculateBill.jsp">
 Calculate Bill
 </a>
+
 
 <a href="printBill.jsp">
 Print Bill
 </a>
 
+
+
+<%
+}
+%>
+
+
+
+
 <a href="help.jsp">
 Help
 </a>
 
+
+
 </div>
+
+
 
 <a class="logout" href="logout">
 Logout
 </a>
 
+
+
 </div>
+
+
+
 
 <div class="footer">
+
 © 2026 Sunrise Dental Clinic Management System
-</div>
 
 </div>
+
+
+
+</div>
+
+
 
 </body>
+
 </html>
