@@ -124,7 +124,7 @@ public class AddUserController extends HttpServlet {
             user.setUsername(username);
 
             if (email.isEmpty()) {
-                user.setEmail(username + "@dentalclinic.com");
+                user.setEmail(username + "@gmail.com");
             } else {
                 user.setEmail(email);
             }
