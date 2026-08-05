@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/logout")
+@WebServlet("/Logout")
 public class LogoutController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -35,6 +35,6 @@ public class LogoutController extends HttpServlet {
         response.addCookie(cookie);
 
         // Redirect to login page
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/Login.jsp");
     }
 }

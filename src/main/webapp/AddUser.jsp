@@ -182,8 +182,6 @@ if(error != null){
 %>
 
 
-
-
 <div class="container">
 
 
@@ -191,23 +189,16 @@ if(error != null){
 Add New User
 </h2>
 
-
-
 <form action="AddUser" method="post">
-
-
 
 <label>
 Full Name
 </label>
 
-
 <input type="text"
        name="fullName"
        placeholder="Enter full name"
        required>
-
-
 
 
 <label>
@@ -221,8 +212,6 @@ Username
        required>
 
 
-
-
 <label>
 Password
 </label>
@@ -232,8 +221,6 @@ Password
        name="password"
        placeholder="Enter password"
        required>
-
-
 
 
 <label>

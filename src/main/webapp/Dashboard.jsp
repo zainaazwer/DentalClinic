@@ -219,7 +219,7 @@ Help
 
 </div>
 
-<a class="logout" href="logout">
+<a class="logout" href="Logout">
 Logout
 </a>
 
