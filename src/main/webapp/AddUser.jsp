@@ -139,9 +139,9 @@ button:hover{
 String role = (String) session.getAttribute("role");
 
 
-if(role == null || !role.equals("Administrator")){
+if(role == null || !role.equals("Admin")){
 
-    response.sendRedirect("dashboard.jsp");
+    response.sendRedirect("Dashboard.jsp");
     return;
 
 }
@@ -193,7 +193,7 @@ Add New User
 
 
 
-<form action="addUser" method="post">
+<form action="AddUser" method="post">
 
 
 
@@ -249,8 +249,8 @@ Select Role
 </option>
 
 
-<option value="Administrator">
-Administrator
+<option value="Admin">
+Admin
 </option>
 
 
@@ -279,7 +279,7 @@ Create User
 
 <div class="back">
 
-<a href="ManageUsers">
+<a href="ManageUsers.jsp">
 
 ← Back to Manage Users
 

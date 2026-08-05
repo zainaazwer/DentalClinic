@@ -12,7 +12,6 @@
 
 <title>Edit User | Sunrise Dental Clinic</title>
 
-
 <style>
 
 body{
@@ -20,7 +19,6 @@ body{
     background:#f4f6f9;
     margin:0;
 }
-
 
 .container{
 
@@ -33,14 +31,12 @@ body{
 
 }
 
-
 h2{
 
     text-align:center;
     color:#1976d2;
 
 }
-
 
 label{
 
@@ -49,7 +45,6 @@ label{
     font-weight:bold;
 
 }
-
 
 input, select{
 
@@ -61,7 +56,6 @@ input, select{
     box-sizing:border-box;
 
 }
-
 
 button{
 
@@ -80,13 +74,11 @@ button{
 
 }
 
-
 button:hover{
 
     background:#0d47a1;
 
 }
-
 
 .message{
 
@@ -95,13 +87,11 @@ button:hover{
 
 }
 
-
 .success{
 
     color:green;
 
 }
-
 
 .error{
 
@@ -109,14 +99,12 @@ button:hover{
 
 }
 
-
 .back{
 
     text-align:center;
     margin-top:20px;
 
 }
-
 
 .back a{
 
@@ -126,31 +114,22 @@ button:hover{
 
 }
 
-
 </style>
-
-
 </head>
-
-
 <body>
-
 
 <%
 
 String role = (String) session.getAttribute("role");
 
+if(role == null || !role.equals("Admin")){
 
-if(role == null || !role.equals("Administrator")){
-
-    response.sendRedirect("dashboard.jsp");
+    response.sendRedirect("Dashboard.jsp");
     return;
 
 }
 
-
 User user = (User) request.getAttribute("user");
-
 
 String error = (String) request.getAttribute("error");
 
@@ -169,7 +148,6 @@ if(error != null){
 <%
 
 }
-
 
 if(success != null){
 
@@ -200,37 +178,26 @@ User details not found.
 
 %>
 
-
-
 <div class="container">
-
 
 <h2>
 Edit User
 </h2>
 
-
-
-<form action="updateUser" method="post">
-
+<form action="EditUser" method="post">
 
 <input type="hidden"
        name="userId"
        value="<%= user.getUserId() %>">
 
-
-
 <label>
 Full Name
 </label>
-
 
 <input type="text"
        name="fullName"
        value="<%= user.getFullName() %>"
        required>
-
-
 
 <label>
 Username
@@ -242,45 +209,31 @@ Username
        value="<%= user.getUsername() %>"
        required>
 
-
-
 <label>
 Password
 </label>
-
 
 <input type="password"
        name="password"
        placeholder="Enter new password">
 
-
-
 <label>
 Role
 </label>
 
-
 <select name="role" required>
 
-
-<option value="Administrator"
-<%= "Administrator".equals(user.getRole()) ? "selected" : "" %>>
-Administrator
+<option value="Admin"
+<%= "Admin".equals(user.getRole()) ? "selected" : "" %>>
+Admin
 </option>
-
-
 
 <option value="Receptionist"
 <%= "Receptionist".equals(user.getRole()) ? "selected" : "" %>>
 Receptionist
 </option>
 
-
-
 </select>
-
-
-
 
 <button type="submit">
 
@@ -288,16 +241,11 @@ Update User
 
 </button>
 
-
-
 </form>
-
-
-
 
 <div class="back">
 
-<a href="manageUsers">
+<a href="ManageUsers">
 
 ← Back to Manage Users
 
@@ -305,19 +253,13 @@ Update User
 
 </div>
 
-
-
 </div>
-
-
 
 <%
 
 }
 
 %>
-
-
 
 </body>
 

@@ -103,7 +103,7 @@ tr:hover{
 
 <h2>Appointment List</h2>
 
-<form action="listAppointments" method="get">
+<form action="ViewAppointment" method="get">
 
 <button type="submit" class="button">
 Refresh Appointment List
@@ -114,7 +114,7 @@ Refresh Appointment List
 <%
 @SuppressWarnings("unchecked")
 List<Appointment> appointments =
-(List<Appointment>) request.getAttribute("appointments");
+(List<Appointment>) request.getAttribute("Appointment");
 
 if(appointments != null && !appointments.isEmpty()){
 %>
@@ -172,7 +172,7 @@ No appointments found.
 %>
 
 <div class="back">
-<a href="dashboard.jsp">← Back to Dashboard</a>
+<a href="Dashboard.jsp">← Back to Dashboard</a>
 </div>
 
 </div>

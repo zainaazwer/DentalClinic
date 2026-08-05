@@ -13,7 +13,7 @@
 %>
 
 <!-- Redirect to Login page after 2 seconds -->
-<meta http-equiv="refresh" content="2;url=<%= contextPath %>/Login">
+<meta http-equiv="refresh" content="2;url=<%= contextPath %>/Login.jsp">
 
 <style>
     * {
@@ -162,7 +162,7 @@
         Redirecting to Login Page
     </p>
 
-    <a href="<%= contextPath %>/Login" class="btn">
+    <a href="<%= contextPath %>/Login.jsp" class="btn">
         Continue to Login
     </a>
 
@@ -175,7 +175,7 @@
 <script>
     // Ensure redirect happens even if meta refresh fails
     setTimeout(function() {
-        window.location.href = '<%= contextPath %>/Login';
+        window.location.href = '<%= contextPath %>/Login.jsp';
     }, 3000);
 </script>
 

@@ -165,14 +165,14 @@ tr:hover{
 String role = (String) session.getAttribute("role");
 
 
-if(role == null || !role.equals("Administrator")){
+if(role == null || !role.equals("Admin")){
 
-    response.sendRedirect("dashboard.jsp");
+    response.sendRedirect("Dashboard.jsp");
     return;
 
 }
 
-
+@SuppressWarnings("unchecked")
 List<User> users = (List<User>) request.getAttribute("users");
 
 
@@ -192,7 +192,7 @@ Manage Users
 
 
 
-<a href="addUser.jsp" class="add-btn">
+<a href="AddUser.jsp" class="add-btn">
 
 + Add New User
 
@@ -274,7 +274,7 @@ for(User user : users){
 
 
 <a class="edit"
-href="editUser?id=<%= user.getUserId() %>">
+href="EditUser?id=<%= user.getUserId() %>">
 
 Edit
 
@@ -334,7 +334,7 @@ No users found.
 
 <div class="back">
 
-<a href="dashboard.jsp">
+<a href="Dashboard.jsp">
 
 ← Back to Dashboard
 

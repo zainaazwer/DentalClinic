@@ -152,7 +152,7 @@ button:hover{
 
     <% } %>
 
-    <form action="login" method="post">
+    <form action="Login" method="post">
 
         <label>Username</label>
 

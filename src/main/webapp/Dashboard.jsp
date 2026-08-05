@@ -5,7 +5,7 @@
     User user = (User) session.getAttribute("user");
 
     if (user == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("Login.jsp");
         return;
     }
 
@@ -136,15 +136,7 @@ Welcome, <%= user.getFullName() %>
 </p>
 
 
-<p>
-You are successfully logged in.
-</p>
-
-
 </div>
-
-
-
 
 <div class="card">
 
@@ -153,23 +145,19 @@ You are successfully logged in.
 Menu
 </h2>
 
-
-
 <div class="menu">
 
-
-
 <%
-if("Administrator".equals(role)){
+if("Admin".equalsIgnoreCase(role)){
 %>
 
 
-<a href="manageUsers">
+<a href="ManageUsers.jsp">
 Manage Users
 </a>
 
 
-<a href="listAppointment">
+<a href="ViewAppointment.jsp">
 View Appointments
 </a>
 
@@ -182,74 +170,60 @@ View Appointments
 
 
 <%
-if("Receptionist".equals(role)){
+if("Receptionist".equalsIgnoreCase(role)){
 %>
 
 
 
-<a href="addPatient.jsp">
+<a href="AddPatient.jsp">
 Add Patient
 </a>
 
 
-<a href="searchPatient.jsp">
+<a href="SearchPatient.jsp">
 Search Patient
 </a>
 
 
-<a href="addAppointment.jsp">
+<a href="AddAppointment.jsp">
 Register Appointment
 </a>
 
 
-<a href="listAppointment">
+<a href="ViewAppointment.jsp">
 View Appointments
 </a>
 
 
-<a href="searchAppointment.jsp">
+<a href="SearchAppointment.jsp">
 Search Appointment
 </a>
 
 
-<a href="calculateBill.jsp">
+<a href="CalculateBill.jsp">
 Calculate Bill
 </a>
 
 
-<a href="printBill.jsp">
+<a href="PrintBill.jsp">
 Print Bill
 </a>
-
-
 
 <%
 }
 %>
 
-
-
-
-<a href="help.jsp">
+<a href="Help.jsp">
 Help
 </a>
 
-
-
 </div>
-
-
 
 <a class="logout" href="logout">
 Logout
 </a>
 
-
-
 </div>
-
-
-
 
 <div class="footer">
 
@@ -257,11 +231,7 @@ Logout
 
 </div>
 
-
-
 </div>
-
-
 
 </body>
 

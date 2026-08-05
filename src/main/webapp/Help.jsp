@@ -212,7 +212,7 @@ Follow the steps below when using the application.
 
 <div class="back">
 
-<a href="dashboard.jsp">
+<a href="Dashboard.jsp">
 ← Back to Dashboard
 </a>
 

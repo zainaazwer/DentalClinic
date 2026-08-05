@@ -11,7 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/viewAppointments")
+@WebServlet("/ViewAppointment.jsp")
 public class ViewAppointmentController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +33,7 @@ public class ViewAppointmentController extends HttpServlet {
             List<Appointment> appointments =
                     appointmentService.getAllAppointments();
 
-            request.setAttribute("appointments", appointments);
+            request.setAttribute("Appointments", appointments);
 
         } catch (SQLException e) {
 
@@ -43,7 +43,7 @@ public class ViewAppointmentController extends HttpServlet {
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/viewAppointments.jsp")
+        request.getRequestDispatcher("/ViewAppointment.jsp")
                .forward(request, response);
     }
 

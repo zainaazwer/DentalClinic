@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/login")
+@WebServlet("/Login")
 public class LoginController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -44,11 +44,11 @@ public class LoginController extends HttpServlet {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
 
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("Login.jsp");
             return;
         }
 
-        request.getRequestDispatcher("login.jsp")
+        request.getRequestDispatcher("Login.jsp")
                .forward(request, response);
     }
 
@@ -66,7 +66,7 @@ public class LoginController extends HttpServlet {
             request.setAttribute("error",
                     "Username and password are required.");
 
-            request.getRequestDispatcher("login.jsp")
+            request.getRequestDispatcher("Login.jsp")
                    .forward(request, response);
 
             return;
@@ -75,6 +75,9 @@ public class LoginController extends HttpServlet {
         try {
 
             User user = authService.login(username, password);
+            
+            System.out.println("Username: " + username);
+            System.out.println("User object: " + user);
 
             if (user != null) {
 
@@ -93,14 +96,14 @@ public class LoginController extends HttpServlet {
                 cookie.setMaxAge(60 * 60 * 24);
                 response.addCookie(cookie);
 
-                response.sendRedirect("dashboard.jsp");
+                response.sendRedirect("Dashboard");
 
             } else {
 
                 request.setAttribute("error",
                         "Invalid username or password.");
 
-                request.getRequestDispatcher("login.jsp")
+                request.getRequestDispatcher("Login.jsp")
                        .forward(request, response);
             }
 
