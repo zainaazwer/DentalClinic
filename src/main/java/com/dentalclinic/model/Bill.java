@@ -30,7 +30,6 @@ public class Bill implements Serializable {
 
     // Payment Information
     private String paymentMethod;
-    private String paymentDate;
 
     public static final String PAYMENT_CASH = "CASH";
     public static final String PAYMENT_CARD = "CARD";
@@ -160,14 +159,6 @@ public class Bill implements Serializable {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public String getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(String paymentDate) {
-        this.paymentDate = paymentDate;
     }
 
     public String getPaymentMethodDisplay() {

@@ -41,31 +41,19 @@ public class BillingService {
 
 
         bill.setBillDate(LocalDate.now().toString());
-
         bill.setAppointmentId(appointment.getAppointmentId());
-
         bill.setPatientId(patient.getPatientId());
         bill.setPatientName(patient.getFullName());
         bill.setPatientContact(patient.getPhoneNumber());
-
-
         bill.setTreatmentType(appointment.getTreatmentType());
-        bill.setTreatmentDescription(treatment.getDescription());
-
         bill.setTreatmentCost(treatmentCost);
         bill.setConsultationFee(consultationFee);
-
         bill.setTotalAmount(totalAmount);
-
-
         bill.setAmountPaid(0.00);
         bill.setPaymentMethod("Pending");
-        bill.setPaymentDate(LocalDate.now().toString());
-
 
         return bill;
     }
-
 
     // Save bill
     public Bill saveBill(Bill bill) throws SQLException {
@@ -74,12 +62,10 @@ public class BillingService {
             return null;
         }
 
-
         boolean success = billDAO.createBill(bill);
 
         return success ? bill : null;
     }
-
 
     // Get bill by ID
     public Bill getBillById(int billId) throws SQLException {

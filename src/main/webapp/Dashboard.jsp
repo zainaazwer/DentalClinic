@@ -166,14 +166,9 @@ View Appointments
 }
 %>
 
-
-
-
 <%
 if("Receptionist".equalsIgnoreCase(role)){
 %>
-
-
 
 <a href="AddPatient.jsp">
 Add Patient
@@ -205,7 +200,7 @@ Calculate Bill
 </a>
 
 
-<a href="PrintBill.jsp">
+<a href="PrintBill">
 Print Bill
 </a>
 

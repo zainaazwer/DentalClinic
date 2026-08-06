@@ -3,7 +3,9 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
 <title>Calculate Bill | Sunrise Dental Clinic</title>
 
@@ -102,46 +104,47 @@ button:hover{
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
 <div class="card">
 
+
 <h2>Calculate Bill</h2>
+
 
 <form action="CalculateBill" method="post">
 
+
 <label>Appointment ID</label>
-<input type="number"
-       name="appointmentId"
-       required>
+<input type="number" name="appointmentId" required>
+
 
 <label>Patient ID</label>
-<input type="number"
-       name="patientId"
-       required>
+<input type="number" name="patientId" required>
+
 
 <label>Patient Name</label>
-<input type="text"
-       name="patientName"
-       required>
+<input type="text" name="patientName" required>
+
 
 <label>Patient Contact</label>
-<input type="text"
-       name="patientContact"
-       required>
+<input type="text" name="patientContact" required>
+
 
 <label>Treatment Type</label>
-<input type="text"
-       name="treatmentType"
-       required>
+<input type="text" name="treatmentType" required>
+
 
 <label>Treatment Cost (LKR)</label>
 <input type="number"
        step="0.01"
        name="treatmentCost"
        required>
+
 
 <label>Consultation Fee (LKR)</label>
 <input type="number"
@@ -150,11 +153,13 @@ button:hover{
        value="50.00"
        required>
 
+
 <label>Amount Paid (LKR)</label>
 <input type="number"
        step="0.01"
        name="amountPaid"
        required>
+
 
 <label>Payment Method</label>
 
@@ -165,69 +170,107 @@ button:hover{
 
 </select>
 
+
 <button type="submit">
 Calculate Bill
 </button>
 
+
 </form>
 
+
+
 <%
+
 Bill bill = (Bill) request.getAttribute("bill");
 
 if(bill != null){
+
 %>
+
 
 <div class="result">
 
+
 <h3>Bill Summary</h3>
 
-<p><strong>Patient:</strong>
+
+<p>
+<strong>Patient:</strong>
 <%= bill.getPatientName() %>
 </p>
 
-<p><strong>Treatment:</strong>
+
+<p>
+<strong>Treatment:</strong>
 <%= bill.getTreatmentType() %>
 </p>
 
-<p><strong>Treatment Cost:</strong>
-$<%= String.format("%.2f", bill.getTreatmentCost()) %>
+
+<p>
+<strong>Treatment Cost:</strong>
+LKR <%= String.format("%.2f", bill.getTreatmentCost()) %>
 </p>
 
-<p><strong>Consultation Fee:</strong>
-$<%= String.format("%.2f", bill.getConsultationFee()) %>
+
+<p>
+<strong>Consultation Fee:</strong>
+LKR <%= String.format("%.2f", bill.getConsultationFee()) %>
 </p>
 
-<p><strong>Total Amount:</strong>
-<strong>$<%= String.format("%.2f", bill.getTotalAmount()) %></strong>
+
+<p>
+<strong>Total Amount:</strong>
+<strong>
+LKR <%= String.format("%.2f", bill.getTotalAmount()) %>
+</strong>
 </p>
 
-<p><strong>Amount Paid:</strong>
-$<%= String.format("%.2f", bill.getAmountPaid()) %>
+
+<p>
+<strong>Amount Paid:</strong>
+LKR <%= String.format("%.2f", bill.getAmountPaid()) %>
 </p>
 
-<p><strong>Payment Method:</strong>
+
+<p>
+<strong>Payment Method:</strong>
 <%= bill.getPaymentMethodDisplay() %>
 </p>
 
+
 </div>
 
-<%
-}
-%>
 
 <%
+
+}
+
+%>
+
+
+
+<%
+
 String error = (String)request.getAttribute("error");
 
 if(error != null){
+
 %>
+
 
 <p class="error">
 <%= error %>
 </p>
 
+
 <%
+
 }
+
 %>
+
+
 
 <div class="back">
 
@@ -237,9 +280,12 @@ if(error != null){
 
 </div>
 
+
 </div>
 
 </div>
+
 
 </body>
+
 </html>

@@ -155,11 +155,6 @@ Bill bill = (Bill) request.getAttribute("bill");
 </tr>
 
 <tr>
-<td class="label">Patient Number</td>
-<td><%= bill.getPatientNumber() %></td>
-</tr>
-
-<tr>
 <td class="label">Contact Number</td>
 <td><%= bill.getPatientContact() %></td>
 </tr>
@@ -167,11 +162,6 @@ Bill bill = (Bill) request.getAttribute("bill");
 <tr>
 <td class="label">Treatment</td>
 <td><%= bill.getTreatmentType() %></td>
-</tr>
-
-<tr>
-<td class="label">Description</td>
-<td><%= bill.getTreatmentDescription() %></td>
 </tr>
 
 <tr>
@@ -204,11 +194,6 @@ $<%= String.format("%.2f", bill.getTotalAmount()) %>
 <tr>
 <td class="label">Payment Method</td>
 <td><%= bill.getPaymentMethodDisplay() %></td>
-</tr>
-
-<tr>
-<td class="label">Payment Date</td>
-<td><%= bill.getPaymentDate() %></td>
 </tr>
 
 </table>
