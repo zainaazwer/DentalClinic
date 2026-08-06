@@ -11,7 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/calculateBill")
+@WebServlet("/CalculateBill")
 public class CalculateBillController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class CalculateBillController extends HttpServlet {
                 request.setAttribute("error",
                         "Appointment not found.");
 
-                request.getRequestDispatcher("/calculateBill.jsp")
+                request.getRequestDispatcher("/CalculateBill.jsp")
                        .forward(request, response);
 
                 return;
@@ -98,6 +98,11 @@ public class CalculateBillController extends HttpServlet {
                     appointment.getTreatmentType())) {
 
                 treatmentCost = 200.00;
+                
+            } else if ("Braces".equalsIgnoreCase(
+                    appointment.getTreatmentType())) {
+
+                treatmentCost = 500.00;
 
             }
 
@@ -135,7 +140,7 @@ public class CalculateBillController extends HttpServlet {
         }
 
 
-        request.getRequestDispatcher("/calculateBill.jsp")
+        request.getRequestDispatcher("/alculateBill.jsp")
                .forward(request, response);
     }
 }

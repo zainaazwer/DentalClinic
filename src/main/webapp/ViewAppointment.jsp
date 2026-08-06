@@ -4,7 +4,9 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
 <title>Appointment List | Sunrise Dental Clinic</title>
 
@@ -59,20 +61,6 @@ tr:hover{
     background:#eeeeee;
 }
 
-.button{
-    display:inline-block;
-    padding:10px 20px;
-    background:#1976d2;
-    color:white;
-    text-decoration:none;
-    border-radius:5px;
-    margin-top:20px;
-}
-
-.button:hover{
-    background:#0d47a1;
-}
-
 .message{
     text-align:center;
     color:red;
@@ -95,6 +83,7 @@ tr:hover{
 
 </head>
 
+
 <body>
 
 <div class="container">
@@ -103,21 +92,17 @@ tr:hover{
 
 <h2>Appointment List</h2>
 
-<form action="ViewAppointment" method="get">
-
-<button type="submit" class="button">
-Refresh Appointment List
-</button>
-
-</form>
 
 <%
-@SuppressWarnings("unchecked")
+
 List<Appointment> appointments =
-(List<Appointment>) request.getAttribute("Appointment");
+(List<Appointment>) request.getAttribute("appointments");
+
 
 if(appointments != null && !appointments.isEmpty()){
+
 %>
+
 
 <table>
 
@@ -131,53 +116,86 @@ if(appointments != null && !appointments.isEmpty()){
 <th>Time</th>
 </tr>
 
+
 <%
+
 for(Appointment appointment : appointments){
+
 %>
+
 
 <tr>
 
-<td><%= appointment.getAppointmentId() %></td>
+<td>
+<%= appointment.getAppointmentId() %>
+</td>
 
-<td><%= appointment.getPatientId() %></td>
+<td>
+<%= appointment.getPatientId() %>
+</td>
 
-<td><%= appointment.getPatientName() %></td>
+<td>
+<%= appointment.getPatientName() %>
+</td>
 
-<td><%= appointment.getDentistName() %></td>
+<td>
+<%= appointment.getDentistName() %>
+</td>
 
-<td><%= appointment.getTreatmentType() %></td>
+<td>
+<%= appointment.getTreatmentType() %>
+</td>
 
-<td><%= appointment.getAppointmentDate() %></td>
+<td>
+<%= appointment.getAppointmentDate() %>
+</td>
 
-<td><%= appointment.getAppointmentTime() %></td>
+<td>
+<%= appointment.getAppointmentTime() %>
+</td>
 
 </tr>
 
+
 <%
+
 }
+
 %>
+
 
 </table>
 
+
 <%
-}else if(appointments != null){
+
+}
+else if(appointments != null){
+
 %>
+
 
 <p class="message">
 No appointments found.
 </p>
 
+
 <%
+
 }
+
 %>
+
 
 <div class="back">
 <a href="Dashboard.jsp">← Back to Dashboard</a>
 </div>
+
 
 </div>
 
 </div>
 
 </body>
+
 </html>

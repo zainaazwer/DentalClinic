@@ -18,34 +18,49 @@ public class ViewAppointmentController extends HttpServlet {
 
     private AppointmentService appointmentService;
 
+
     @Override
     public void init() throws ServletException {
+
         appointmentService = new AppointmentService();
+
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
 
+
         try {
 
+            // Get all appointments from database
             List<Appointment> appointments =
                     appointmentService.getAllAppointments();
 
-            request.setAttribute("Appointments", appointments);
+
+            // Send appointment list to JSP
+            request.setAttribute("appointments", appointments);
+
 
         } catch (SQLException e) {
+
 
             request.setAttribute("error",
                     "Unable to retrieve appointments.");
 
+
             e.printStackTrace();
+
         }
+
 
         request.getRequestDispatcher("/ViewAppointment.jsp")
                .forward(request, response);
+
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request,

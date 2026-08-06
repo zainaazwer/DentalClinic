@@ -17,12 +17,10 @@ public class Bill implements Serializable {
     // Patient Information
     private int patientId;
     private String patientName;
-    private String patientNumber;
     private String patientContact;
 
     // Treatment Information
     private String treatmentType;
-    private String treatmentDescription;
 
     // Financial Details
     private double treatmentCost;
@@ -108,14 +106,6 @@ public class Bill implements Serializable {
         this.patientName = patientName;
     }
 
-    public String getPatientNumber() {
-        return patientNumber;
-    }
-
-    public void setPatientNumber(String patientNumber) {
-        this.patientNumber = patientNumber;
-    }
-
     public String getPatientContact() {
         return patientContact;
     }
@@ -130,14 +120,6 @@ public class Bill implements Serializable {
 
     public void setTreatmentType(String treatmentType) {
         this.treatmentType = treatmentType;
-    }
-
-    public String getTreatmentDescription() {
-        return treatmentDescription;
-    }
-
-    public void setTreatmentDescription(String treatmentDescription) {
-        this.treatmentDescription = treatmentDescription;
     }
 
     public double getTreatmentCost() {

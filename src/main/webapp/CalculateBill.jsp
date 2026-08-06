@@ -127,11 +127,6 @@ button:hover{
        name="patientName"
        required>
 
-<label>Patient Number</label>
-<input type="text"
-       name="patientNumber"
-       required>
-
 <label>Patient Contact</label>
 <input type="text"
        name="patientContact"
@@ -142,18 +137,13 @@ button:hover{
        name="treatmentType"
        required>
 
-<label>Treatment Description</label>
-<input type="text"
-       name="treatmentDescription"
-       required>
-
 <label>Treatment Cost (LKR)</label>
 <input type="number"
        step="0.01"
        name="treatmentCost"
        required>
 
-<label>Consultation Fee ($)</label>
+<label>Consultation Fee (LKR)</label>
 <input type="number"
        step="0.01"
        name="consultationFee"
@@ -213,10 +203,6 @@ $<%= String.format("%.2f", bill.getConsultationFee()) %>
 
 <p><strong>Amount Paid:</strong>
 $<%= String.format("%.2f", bill.getAmountPaid()) %>
-</p>
-
-<p><strong>Balance:</strong>
-$<%= String.format("%.2f", bill.calculateBalance()) %>
 </p>
 
 <p><strong>Payment Method:</strong>

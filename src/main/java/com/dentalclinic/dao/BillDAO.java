@@ -23,10 +23,8 @@ public class BillDAO {
             pstmt.setInt(2, bill.getAppointmentId());
             pstmt.setInt(3, bill.getPatientId());
             pstmt.setString(4, bill.getPatientName());
-            pstmt.setString(5, bill.getPatientNumber());
             pstmt.setString(6, bill.getPatientContact());
             pstmt.setString(7, bill.getTreatmentType());
-            pstmt.setString(8, bill.getTreatmentDescription());
             pstmt.setDouble(9, bill.getTreatmentCost());
             pstmt.setDouble(10, bill.getConsultationFee());
             pstmt.setDouble(11, bill.getTotalAmount());
@@ -120,11 +118,9 @@ public class BillDAO {
         bill.setPatientId(rs.getInt("patientId"));
 
         bill.setPatientName(rs.getString("patientName"));
-        bill.setPatientNumber(rs.getString("patientNumber"));
         bill.setPatientContact(rs.getString("patientContact"));
 
         bill.setTreatmentType(rs.getString("treatmentType"));
-        bill.setTreatmentDescription(rs.getString("treatmentDescription"));
         bill.setTreatmentCost(rs.getDouble("treatmentCost"));
 
         bill.setConsultationFee(rs.getDouble("consultationFee"));

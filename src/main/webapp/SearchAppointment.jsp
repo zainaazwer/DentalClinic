@@ -144,7 +144,7 @@ if(appointment != null){
 <th>Appointment ID</th>
 <th>Patient ID</th>
 <th>Patient Name</th>
-<th>Dentist</th>
+<th>Dentist Name</th>
 <th>Treatment</th>
 <th>Date</th>
 <th>Time</th>
