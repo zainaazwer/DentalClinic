@@ -119,7 +119,7 @@ if(error!=null){
 }
 %>
 
-<form action="addPatient" method="post">
+<form action="AddPatient" method="post">
 
 <label>Full Name</label>
 
@@ -146,7 +146,7 @@ value="Add Patient">
 </form>
 
 <div class="back">
-<a href="dashboard.jsp">← Back to Dashboard</a>
+<a href="Dashboard.jsp">← Back to Dashboard</a>
 </div>
 
 </div>

@@ -106,7 +106,7 @@ td{
 
         <h2>Search Patient</h2>
 
-        <form action="searchPatient" method="get">
+        <form action="SearchPatient" method="get">
 
             <label>Enter Patient ID:</label><br>
 
@@ -181,7 +181,7 @@ td{
 
     <div class="back">
 
-        <a href="dashboard.jsp">
+        <a href="Dashboard.jsp">
             ← Back to Dashboard
         </a>
 

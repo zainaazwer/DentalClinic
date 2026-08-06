@@ -152,12 +152,12 @@ if("Admin".equalsIgnoreCase(role)){
 %>
 
 
-<a href="ManageUsers.jsp">
+<a href="ManageUsers">
 Manage Users
 </a>
 
 
-<a href="ViewAppointment.jsp">
+<a href="ViewAppointment">
 View Appointments
 </a>
 
@@ -190,7 +190,7 @@ Register Appointment
 </a>
 
 
-<a href="ViewAppointment.jsp">
+<a href="ViewAppointment">
 View Appointments
 </a>
 

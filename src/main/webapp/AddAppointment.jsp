@@ -161,7 +161,7 @@ if(error != null){
 
 
 
-<form action="addAppointment" method="post">
+<form action="AddAppointment" method="post">
 
 
 <label>Patient ID</label>
@@ -220,11 +220,9 @@ Register Appointment
 
 </form>
 
-
-
 <div class="back">
 
-<a href="dashboard.jsp">
+<a href="Dashboard.jsp">
 ← Back to Dashboard
 </a>
 

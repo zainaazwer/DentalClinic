@@ -107,7 +107,7 @@ td{
 
 <h2>Search Appointment</h2>
 
-<form action="searchAppointment" method="get">
+<form action="SearchAppointment" method="get">
 
 <label>Appointment ID</label><br>
 
@@ -204,7 +204,7 @@ Appointment not found.
 
 <div class="back">
 
-<a href="dashboard.jsp">
+<a href="Dashboard.jsp">
 ← Back to Dashboard
 </a>
 

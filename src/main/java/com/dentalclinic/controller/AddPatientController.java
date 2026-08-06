@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/addPatient")
+@WebServlet("/AddPatient")
 public class AddPatientController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public class AddPatientController extends HttpServlet {
             throws ServletException, IOException {
 
         // Display add patient page
-        request.getRequestDispatcher("addPatient.jsp")
+        request.getRequestDispatcher("AddPatient.jsp")
                .forward(request, response);
     }
 
@@ -66,7 +66,7 @@ public class AddPatientController extends HttpServlet {
                 request.setAttribute("message",
                         "Patient registered successfully.");
 
-                request.getRequestDispatcher("addPatient.jsp")
+                request.getRequestDispatcher("AddPatient.jsp")
                        .forward(request, response);
 
             }else{
@@ -74,7 +74,7 @@ public class AddPatientController extends HttpServlet {
                 request.setAttribute("error",
                         "Failed to register patient.");
 
-                request.getRequestDispatcher("addPatient.jsp")
+                request.getRequestDispatcher("AddPatient.jsp")
                        .forward(request, response);
             }
 
@@ -84,7 +84,7 @@ public class AddPatientController extends HttpServlet {
             request.setAttribute("error",
                     "Database error: " + e.getMessage());
 
-            request.getRequestDispatcher("addPatient.jsp")
+            request.getRequestDispatcher("AddPatient.jsp")
                    .forward(request, response);
 
         } catch(Exception e){
@@ -92,7 +92,7 @@ public class AddPatientController extends HttpServlet {
             request.setAttribute("error",
                     "An unexpected error occurred.");
 
-            request.getRequestDispatcher("addPatient.jsp")
+            request.getRequestDispatcher("AddPatient.jsp")
                    .forward(request, response);
         }
     }

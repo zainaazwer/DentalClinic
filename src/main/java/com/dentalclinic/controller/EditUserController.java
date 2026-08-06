@@ -1,6 +1,6 @@
 package com.dentalclinic.controller;
 
-import com.dentalclinic.dao.UserDAO; 
+import com.dentalclinic.dao.UserDAO;
 import com.dentalclinic.model.User;
 
 import java.io.IOException;
@@ -19,10 +19,9 @@ public class EditUserController extends HttpServlet {
 
     @Override
     public void init() {
-
         userDAO = new UserDAO();
-
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -33,130 +32,249 @@ public class EditUserController extends HttpServlet {
         HttpSession session = request.getSession(false);
 
 
-        if(session == null || session.getAttribute("user") == null){
+        // Check login
+        if (session == null || session.getAttribute("user") == null) {
 
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/Login.jsp");
             return;
-
         }
 
 
-        User loggedUser = 
-                (User) session.getAttribute("user");
+        User loggedUser = (User) session.getAttribute("user");
 
-        // Admin access only
-        if(!"Administrator".equals(loggedUser.getRole())){
 
-            response.sendRedirect("dDshboard.jsp");
+        // Administrator only
+        if (!"Admin".equals(loggedUser.getRole())) {
+
+            response.sendRedirect(request.getContextPath() + "/Dashboard.jsp");
             return;
-
         }
+
 
         try {
 
-            int userId = Integer.parseInt(
-                    request.getParameter("userId")
-            );
+            String userIdParam = request.getParameter("userId");
+
+
+            if (userIdParam == null || userIdParam.isEmpty()) {
+
+                response.sendRedirect(
+                        request.getContextPath() + "/ManageUsers"
+                );
+
+                return;
+            }
+
+
+            int userId = Integer.parseInt(userIdParam);
+
 
             User user = userDAO.getUserById(userId);
 
+
+            if (user == null) {
+
+                session.setAttribute(
+                        "error",
+                        "User not found."
+                );
+
+                response.sendRedirect(
+                        request.getContextPath() + "/ManageUsers"
+                );
+
+                return;
+            }
+
+
             request.setAttribute("user", user);
+
 
             request.getRequestDispatcher("EditUser.jsp")
                    .forward(request, response);
 
-        } catch(Exception e) {
+
+
+        } catch (Exception e) {
 
             e.printStackTrace();
 
-            response.sendRedirect("manageUsers");
-
+            response.sendRedirect(
+                    request.getContextPath() + "/ManageUsers"
+            );
         }
 
     }
+
+
 
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
 
+
         HttpSession session = request.getSession(false);
 
-        if(session == null || session.getAttribute("user") == null){
 
-            response.sendRedirect("Login.jsp");
+
+        if (session == null || session.getAttribute("user") == null) {
+
+            response.sendRedirect(
+                    request.getContextPath() + "/Login.jsp"
+            );
+
             return;
-
         }
 
-        User loggedUser =
-                (User) session.getAttribute("user");
 
-        // Admin access only
-        if(!"Administrator".equals(loggedUser.getRole())){
 
-            response.sendRedirect("Dashboard.jsp");
+        User loggedUser = (User) session.getAttribute("user");
+
+
+
+        if (!"Admin".equals(loggedUser.getRole())) {
+
+            response.sendRedirect(
+                    request.getContextPath() + "/Dashboard.jsp"
+            );
+
             return;
-
         }
+
+
 
         try {
 
+
+            int userId = Integer.parseInt(
+                    request.getParameter("userId")
+            );
+
+
+
+            User existingUser = userDAO.getUserById(userId);
+
+
+
+            if(existingUser == null){
+
+                session.setAttribute(
+                        "error",
+                        "User not found."
+                );
+
+                response.sendRedirect(
+                        request.getContextPath() + "/ManageUsers"
+                );
+
+                return;
+            }
+
+
+
+
             User user = new User();
 
-            user.setUserId(
-                    Integer.parseInt(request.getParameter("userId"))
-            );
+
+            user.setUserId(userId);
+
+
+
+            String username = request.getParameter("username");
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String role = request.getParameter("role");
+            String password = request.getParameter("password");
+
+
 
             user.setUsername(
-                    request.getParameter("username")
+                    username != null ? username.trim() : ""
             );
 
-            user.setPassword(
-                    request.getParameter("password")
-            );
 
             user.setFullName(
-                    request.getParameter("fullName")
+                    fullName != null ? fullName.trim() : ""
             );
+
 
             user.setEmail(
-                    request.getParameter("email")
+                    email != null ? email.trim() : ""
             );
+
 
             user.setRole(
-                    request.getParameter("role")
+                    role != null ? role.trim() : ""
             );
 
-            boolean updated =
-                    userDAO.updateUser(user);
+
+
+            // Keep old password if no new password entered
+            if(password == null || password.trim().isEmpty()){
+
+                user.setPassword(
+                        existingUser.getPassword()
+                );
+
+            } else {
+
+                user.setPassword(
+                        password.trim()
+                );
+            }
+
+
+
+            System.out.println("Updating User");
+            System.out.println("ID: " + user.getUserId());
+            System.out.println("Username: " + user.getUsername());
+            System.out.println("Password: " + user.getPassword());
+
+
+
+            boolean updated = userDAO.updateUser(user);
+
 
 
             if(updated){
 
-                request.setAttribute("success",
-                        "User updated successfully.");
+                session.setAttribute(
+                        "success",
+                        "User updated successfully."
+                );
 
             } else {
 
-                request.setAttribute("error",
-                        "Failed to update user.");
-
+                session.setAttribute(
+                        "error",
+                        "Failed to update user."
+                );
             }
 
-            request.getRequestDispatcher("ManageUsers.jsp")
-                   .forward(request, response);
 
-        } catch(Exception e) {
+
+            response.sendRedirect(
+                    request.getContextPath() + "/ManageUsers"
+            );
+
+
+
+        } catch(Exception e){
+
 
             e.printStackTrace();
 
-            request.setAttribute("error",
-                    "Error updating user.");
 
-            request.getRequestDispatcher("ManageUsers.jsp")
-                   .forward(request, response);
+            session.setAttribute(
+                    "error",
+                    "Error updating user: " + e.getMessage()
+            );
 
+
+            response.sendRedirect(
+                    request.getContextPath() + "/ManageUsers"
+            );
         }
 
     }

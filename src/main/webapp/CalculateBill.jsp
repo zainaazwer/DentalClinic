@@ -110,7 +110,7 @@ button:hover{
 
 <h2>Calculate Bill</h2>
 
-<form action="calculateBill" method="post">
+<form action="CalculateBill" method="post">
 
 <label>Appointment ID</label>
 <input type="number"
@@ -245,7 +245,7 @@ if(error != null){
 
 <div class="back">
 
-<a href="dashboard.jsp">
+<a href="Dashboard.jsp">
 ← Back to Dashboard
 </a>
 

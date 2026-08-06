@@ -266,7 +266,7 @@ Create User
 
 <div class="back">
 
-<a href="ManageUsers.jsp">
+<a href="ManageUsers">
 
 ← Back to Manage Users
 

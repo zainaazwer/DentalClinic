@@ -225,7 +225,7 @@ $<%= String.format("%.2f", bill.getTotalAmount()) %>
 Print Bill
 </button>
 
-<button onclick="location.href='dashboard.jsp'">
+<button onclick="location.href='Dashboard.jsp'">
 Back to Dashboard
 </button>
 

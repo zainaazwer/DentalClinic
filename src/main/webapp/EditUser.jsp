@@ -62,13 +62,10 @@ button{
     width:100%;
     margin-top:25px;
     padding:12px;
-
     background:#1976d2;
     color:white;
-
     border:none;
     border-radius:5px;
-
     cursor:pointer;
     font-size:16px;
 
@@ -115,25 +112,35 @@ button:hover{
 }
 
 </style>
+
 </head>
+
+
 <body>
+
 
 <%
 
-String role = (String) session.getAttribute("role");
+User loggedUser = (User) session.getAttribute("user");
 
-if(role == null || !role.equals("Admin")){
+
+if(loggedUser == null || 
+   !"Admin".equals(loggedUser.getRole())){
+
 
     response.sendRedirect("Dashboard.jsp");
     return;
 
 }
 
+
 User user = (User) request.getAttribute("user");
+
 
 String error = (String) request.getAttribute("error");
 
 String success = (String) request.getAttribute("success");
+
 
 
 if(error != null){
@@ -141,34 +148,35 @@ if(error != null){
 %>
 
 <p class="message error">
-<%= error %>
+    <%= error %>
 </p>
-
 
 <%
 
 }
+
 
 if(success != null){
 
 %>
 
 <p class="message success">
-<%= success %>
+    <%= success %>
 </p>
-
 
 <%
 
 }
 
 
+
 if(user == null){
 
 %>
 
+
 <p class="message error">
-User details not found.
+    User details not found.
 </p>
 
 
@@ -178,26 +186,35 @@ User details not found.
 
 %>
 
+
 <div class="container">
+
 
 <h2>
 Edit User
 </h2>
 
+
 <form action="EditUser" method="post">
+
 
 <input type="hidden"
        name="userId"
        value="<%= user.getUserId() %>">
 
+
+
 <label>
 Full Name
 </label>
+
 
 <input type="text"
        name="fullName"
        value="<%= user.getFullName() %>"
        required>
+
+
 
 <label>
 Username
@@ -209,57 +226,82 @@ Username
        value="<%= user.getUsername() %>"
        required>
 
+
+
+<label>
+Email
+</label>
+
+
+<input type="email"
+       name="email"
+       value="<%= user.getEmail() == null ? "" : user.getEmail() %>">
+
+
+
 <label>
 Password
 </label>
 
+
 <input type="password"
        name="password"
-       placeholder="Enter new password">
+       placeholder="Enter new password or leave blank to keep current password">
+
+
 
 <label>
 Role
 </label>
 
+
 <select name="role" required>
+
 
 <option value="Admin"
 <%= "Admin".equals(user.getRole()) ? "selected" : "" %>>
-Admin
+Administrator
 </option>
+
+
 
 <option value="Receptionist"
 <%= "Receptionist".equals(user.getRole()) ? "selected" : "" %>>
 Receptionist
 </option>
 
+
 </select>
 
+
+
 <button type="submit">
-
 Update User
-
 </button>
 
+
 </form>
+
+
 
 <div class="back">
 
 <a href="ManageUsers">
-
 ← Back to Manage Users
-
 </a>
 
 </div>
 
+
 </div>
+
 
 <%
 
 }
 
 %>
+
 
 </body>
 

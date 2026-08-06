@@ -1,9 +1,10 @@
 package com.dentalclinic.controller;
 
-import com.dentalclinic.dao.UserDAO; 
+import com.dentalclinic.dao.UserDAO;
 import com.dentalclinic.model.User;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -17,78 +18,56 @@ public class ManageUsersController extends HttpServlet {
 
     private UserDAO userDAO;
 
-
     @Override
-    public void init() {
-
+    public void init() throws ServletException {
         userDAO = new UserDAO();
-
     }
-
-
 
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
 
-
         HttpSession session = request.getSession(false);
 
-
         // Check login
-        if(session == null || session.getAttribute("user") == null){
-
-            response.sendRedirect("login.jsp");
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("Login.jsp");
             return;
-
         }
 
+        User loggedUser = (User) session.getAttribute("user");
 
+        // Administrator only
+        if (!"Administrator".equals(loggedUser.getRole())
+                && !"Admin".equals(loggedUser.getRole())) {
 
-        User user = (User) session.getAttribute("user");
-
-
-
-        // Admin access only
-        if(!"Administrator".equals(user.getRole())){
-
-            response.sendRedirect("dashboard.jsp");
+            response.sendRedirect("Dashboard.jsp");
             return;
-
         }
-
-
 
         try {
 
-
             List<User> users = userDAO.getAllUsers();
 
+            // Debug
+            System.out.println("Users loaded = " + users.size());
 
             request.setAttribute("users", users);
 
-
-            request.getRequestDispatcher("manageUsers.jsp")
+            request.getRequestDispatcher("ManageUsers.jsp")
                    .forward(request, response);
 
-
-
-        } catch(Exception e){
-
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
+            request.setAttribute("error", e.getMessage());
 
-            request.setAttribute("error",
-                    "Unable to load users.");
-
-
-            request.getRequestDispatcher("manageUsers.jsp")
+            request.getRequestDispatcher("ManageUsers.jsp")
                    .forward(request, response);
 
         }
 
     }
-
 }

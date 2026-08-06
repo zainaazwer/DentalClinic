@@ -108,18 +108,37 @@ public class UserDAO {
 
     // Get all users
     public List<User> getAllUsers() throws SQLException {
+
         List<User> users = new ArrayList<>();
+
         String sql = "SELECT * FROM users ORDER BY userId";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
 
-            while (rs.next()) {
-                users.add(mapResultSetToUser(rs));
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+
+            while(rs.next()) {
+
+                User user = new User();
+
+                user.setUserId(rs.getInt("userId"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setFullName(rs.getString("fullName"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
+
+                users.add(user);
+
             }
+
         }
+
+
         return users;
+
     }
 
     // Get users by role
