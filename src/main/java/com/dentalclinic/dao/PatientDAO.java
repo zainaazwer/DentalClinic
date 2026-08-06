@@ -9,7 +9,7 @@ public class PatientDAO {
 
     // Create a patient
     public boolean createPatient(Patient patient) throws SQLException {
-        String sql = "INSERT INTO patients (fullName, address, phoneNumber) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO patient (fullName, address, phoneNumber) VALUES (?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -24,7 +24,7 @@ public class PatientDAO {
 
     // Get patient by ID
     public Patient getPatientById(int patientId) throws SQLException {
-        String sql = "SELECT * FROM patients WHERE patientId = ?";
+        String sql = "SELECT * FROM patient WHERE patientId = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -52,7 +52,7 @@ public class PatientDAO {
     public List<Patient> getAllPatients() throws SQLException {
         List<Patient> patients = new ArrayList<>();
 
-        String sql = "SELECT * FROM patients ORDER BY fullName";
+        String sql = "SELECT * FROM patient ORDER BY fullName";
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -75,7 +75,7 @@ public class PatientDAO {
 
     // Update patient
     public boolean updatePatient(Patient patient) throws SQLException {
-        String sql = "UPDATE patients SET fullName = ?, address = ?, phoneNumber = ? WHERE patientId = ?";
+        String sql = "UPDATE patient SET fullName = ?, address = ?, phoneNumber = ? WHERE patientId = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/addAppointment")
+@WebServlet("/AddAppointment")
 public class AddAppointmentController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class AddAppointmentController extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.getRequestDispatcher("/addAppointment.jsp")
+        request.getRequestDispatcher("/AddAppointment.jsp")
                .forward(request, response);
     }
 
@@ -62,7 +62,9 @@ public class AddAppointmentController extends HttpServlet {
 
             boolean success =
                     appointmentService.registerAppointment(appointment);
-
+            
+            System.out.println("Appointment Time = " + appointment.getAppointmentTime());
+            
             if (success) {
 
                 request.setAttribute(
@@ -92,7 +94,7 @@ public class AddAppointmentController extends HttpServlet {
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/addAppointment.jsp")
+        request.getRequestDispatcher("/AddAppointment.jsp")
                .forward(request, response);
     }
 }

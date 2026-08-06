@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/searchAppointment")
+@WebServlet("/SearchAppointment")
 public class SearchAppointmentController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -63,7 +63,7 @@ public class SearchAppointmentController extends HttpServlet {
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/searchAppointment.jsp")
+        request.getRequestDispatcher("/SearchAppointment.jsp")
                .forward(request, response);
     }
 

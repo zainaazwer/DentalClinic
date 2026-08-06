@@ -103,7 +103,7 @@ Please try again later.
 </div>
 
 
-<a class="button" href="dashboard.jsp">
+<a class="button" href="Dashboard.jsp">
 Return to Dashboard
 </a>
 
