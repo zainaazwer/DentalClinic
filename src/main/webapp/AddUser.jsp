@@ -16,6 +16,7 @@
 body{
     font-family:Arial, sans-serif;
     background:#f4f6f9;
+    background-image: url("images/adduser.jpg");
     margin:0;
 }
 

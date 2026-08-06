@@ -19,6 +19,7 @@
 body{
 
     background:#f4f8fb;
+    background-image: url("images/login.jpg");
     display:flex;
     justify-content:center;
     align-items:center;

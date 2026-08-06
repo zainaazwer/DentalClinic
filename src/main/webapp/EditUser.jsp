@@ -18,6 +18,7 @@ body{
     font-family:Arial, sans-serif;
     background:#f4f6f9;
     margin:0;
+    background-image: url("images/edituser.jpg");
 }
 
 .container{

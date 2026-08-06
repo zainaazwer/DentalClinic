@@ -28,6 +28,7 @@ body{
     margin:0;
     font-family:Arial, Helvetica, sans-serif;
     background:#f4f6f9;
+    background-image: url("images/dashboard.jpg");
 }
 
 .header{

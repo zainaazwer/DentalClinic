@@ -25,6 +25,7 @@
 
     body {
         background: #f4f9fc;
+        background-image: url("images/index.jpg");
         display: flex;
         justify-content: center;
         align-items: center;
