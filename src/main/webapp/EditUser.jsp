@@ -35,7 +35,7 @@ body{
 h2{
 
     text-align:center;
-    color:#1976d2;
+    color:#008000;
 
 }
 
@@ -63,7 +63,7 @@ button{
     width:100%;
     margin-top:25px;
     padding:12px;
-    background:#1976d2;
+    background:#008000;
     color:white;
     border:none;
     border-radius:5px;
@@ -106,7 +106,7 @@ button:hover{
 
 .back a{
 
-    color:#1976d2;
+    color:#008000;
     text-decoration:none;
     font-weight:bold;
 

@@ -136,18 +136,25 @@ public class AddUserController extends HttpServlet {
 
             if (added) {
 
-                request.setAttribute("success",
-                        "User added successfully.");
+                request.getSession().setAttribute(
+                        "success",
+                        "User added successfully!"
+                );
+
+                response.sendRedirect("Dashboard");
+                return;
 
             } else {
 
-                request.setAttribute("error",
-                        "Failed to add user.");
+                request.setAttribute(
+                        "error",
+                        "Failed to add user."
+                );
 
+                request.getRequestDispatcher("AddUser.jsp")
+                       .forward(request, response);
+                return;
             }
-
-            request.getRequestDispatcher("AddUser.jsp")
-                   .forward(request, response);
 
         } catch (Exception e) {
 

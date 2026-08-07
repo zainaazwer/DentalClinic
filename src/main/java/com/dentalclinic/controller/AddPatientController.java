@@ -63,10 +63,10 @@ public class AddPatientController extends HttpServlet {
 
             if(result){
 
-                request.setAttribute("message",
+                request.getSession().setAttribute("success",
                         "Patient registered successfully.");
 
-                request.getRequestDispatcher("AddPatient.jsp")
+                request.getRequestDispatcher("Dashboard.jsp")
                        .forward(request, response);
 
             }else{

@@ -1,6 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
+<%
+String success = (String) session.getAttribute("success");
+
+if(success != null){
+%>
+
+<div class="success-message">
+    <%= success %>
+</div>
+
+<%
+session.removeAttribute("success");
+}
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,7 +53,7 @@ body{
 h1{
 
     text-align:center;
-    color:#0077b6;
+    color:#8B4513;
     margin-bottom:8px;
 }
 
@@ -80,7 +95,7 @@ button{
     width:100%;
     padding:13px;
     margin-top:25px;
-    background:#0077b6;
+    background:#8B4513;
     color:white;
     border:none;
     border-radius:5px;
@@ -111,6 +126,20 @@ button:hover{
     border-radius:5px;
     margin-bottom:15px;
     text-align:center;
+}
+
+.success-message{
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background:#d4edda;
+    color:#155724;
+    padding:12px 30px;
+    border-radius:8px;
+    font-weight:bold;
+    z-index:1000;
+    box-shadow:0 3px 10px rgba(0,0,0,0.15);
 }
 
 .footer{

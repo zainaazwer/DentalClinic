@@ -87,6 +87,9 @@ public class LoginController extends HttpServlet {
                 session.setAttribute("username", user.getUsername());
                 session.setAttribute("fullName", user.getFullName());
                 session.setAttribute("role", user.getRole());
+                
+                session.setAttribute("success",
+                        "Login successful!");
 
                 session.setMaxInactiveInterval(30 * 60);
 

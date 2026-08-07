@@ -67,9 +67,13 @@ public class AddAppointmentController extends HttpServlet {
             
             if (success) {
 
-                request.setAttribute(
+                request.getSession().setAttribute(
                         "success",
-                        "Appointment registered successfully.");
+                        "Appointment registered successfully!"
+                );
+
+                response.sendRedirect("Dashboard");
+                return;
 
             } else {
 
@@ -77,6 +81,10 @@ public class AddAppointmentController extends HttpServlet {
                         "error",
                         "Unable to register appointment.");
 
+                request.getRequestDispatcher("/AddAppointment.jsp")
+                       .forward(request, response);
+
+                return;
             }
 
         } catch (NumberFormatException e) {

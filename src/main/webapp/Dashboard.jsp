@@ -10,6 +10,8 @@
     }
 
     String role = user.getRole();
+    
+    String success = (String) session.getAttribute("success");
 %>
 
 
@@ -75,6 +77,17 @@ body{
     background:#1565c0;
 }
 
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px;
+    margin: 15px auto;
+    width: 80%;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
 .logout{
     display:inline-block;
     margin-top:20px;
@@ -109,6 +122,19 @@ body{
 <h1>
 Sunrise Dental Clinic Management System
 </h1>
+
+<%
+if(success != null){
+%>
+
+<div class="success-message">
+    <%= success %>
+</div>
+
+<%
+session.removeAttribute("success");
+}
+%>
 
 </div>
 

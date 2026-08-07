@@ -33,6 +33,12 @@ public class LogoutController extends HttpServlet {
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
         response.addCookie(cookie);
+        
+        HttpSession newSession = request.getSession();
+        newSession.setAttribute(
+                "success",
+                "Logged out successfully."
+        );
 
         // Redirect to login page
         response.sendRedirect(request.getContextPath() + "/Login.jsp");
