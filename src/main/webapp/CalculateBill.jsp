@@ -32,7 +32,7 @@ body{
 
 h2{
     text-align:center;
-    color:#1976d2;
+    color:#800080;
 }
 
 label{
@@ -61,7 +61,7 @@ select{
 button{
     width:100%;
     padding:12px;
-    background:#1976d2;
+    background:#800080;
     color:white;
     border:none;
     border-radius:5px;
@@ -70,7 +70,7 @@ button{
 }
 
 button:hover{
-    background:#0d47a1;
+    background:#800080;
 }
 
 .result{
@@ -91,7 +91,7 @@ button:hover{
 
 .back a{
     text-decoration:none;
-    color:#1976d2;
+    color:#800080;
     font-weight:bold;
 }
 

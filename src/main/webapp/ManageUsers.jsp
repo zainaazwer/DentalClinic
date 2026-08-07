@@ -50,13 +50,13 @@ body{
 
 h2{
     text-align:center;
-    color:#1976d2;
+    color:#ff1493;
 }
 
 .add-btn{
     display:inline-block;
     padding:10px 20px;
-    background:#1976d2;
+    background:#ff1493;
     color:white;
     text-decoration:none;
     border-radius:5px;
@@ -73,7 +73,7 @@ table{
 }
 
 th{
-    background:#1976d2;
+    background:#ff1493;
     color:white;
     padding:12px;
 }
@@ -117,7 +117,7 @@ tr:hover{
 
 .back a{
     text-decoration:none;
-    color:#1976d2;
+    color:#ff1493;
     font-weight:bold;
 }
 

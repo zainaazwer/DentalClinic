@@ -33,7 +33,7 @@ body{
 
 h2{
     text-align:center;
-    color:#1976d2;
+    color:#8B4513;
 }
 
 table{
@@ -43,7 +43,7 @@ table{
 }
 
 th{
-    background:#1976d2;
+    background:#8B4513;
     color:white;
     padding:12px;
 }
@@ -75,7 +75,7 @@ tr:hover{
 }
 
 .back a{
-    color:#1976d2;
+    color:#8B4513;
     text-decoration:none;
     font-weight:bold;
 }
