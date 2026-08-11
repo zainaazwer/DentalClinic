@@ -1,6 +1,7 @@
 package com.dentalclinic.daoTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.sql.Connection;
@@ -41,6 +42,7 @@ public class appointmentDAOTest {
         resultSet = mock(ResultSet.class);
     }
 
+
     // CREATE APPOINTMENT - SUCCESS
     @Test
     void testCreateAppointmentSuccess() throws Exception {
@@ -53,7 +55,6 @@ public class appointmentDAOTest {
         appointment.setTreatmentType("Cleaning");
         appointment.setAppointmentDate("2026-08-15");
         appointment.setAppointmentTime("10:30");
-
 
         when(connection.prepareStatement(
                 anyString(),
@@ -72,17 +73,14 @@ public class appointmentDAOTest {
         when(resultSet.getInt(1))
                 .thenReturn(100);
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             boolean result =
                     appointmentDAO.createAppointment(appointment);
-
 
             assertTrue(result);
 
@@ -91,17 +89,16 @@ public class appointmentDAOTest {
                     appointment.getAppointmentId()
             );
 
-
             verify(preparedStatement)
                     .setDate(
-                            eq(1),
-                            eq(Date.valueOf("2026-08-15"))
+                            1,
+                            Date.valueOf("2026-08-15")
                     );
 
             verify(preparedStatement)
                     .setTime(
-                            eq(2),
-                            eq(Time.valueOf("10:30:00"))
+                            2,
+                            Time.valueOf("10:30:00")
                     );
 
             verify(preparedStatement)
@@ -121,6 +118,7 @@ public class appointmentDAOTest {
         }
     }
 
+
     // CREATE APPOINTMENT - FAILURE
     @Test
     void testCreateAppointmentFailure() throws Exception {
@@ -134,7 +132,6 @@ public class appointmentDAOTest {
         appointment.setAppointmentDate("2026-08-15");
         appointment.setAppointmentTime("10:30");
 
-
         when(connection.prepareStatement(
                 anyString(),
                 eq(Statement.RETURN_GENERATED_KEYS)))
@@ -143,17 +140,14 @@ public class appointmentDAOTest {
         when(preparedStatement.executeUpdate())
                 .thenReturn(0);
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             boolean result =
                     appointmentDAO.createAppointment(appointment);
-
 
             assertFalse(result);
 
@@ -161,6 +155,7 @@ public class appointmentDAOTest {
                     .executeUpdate();
         }
     }
+
 
     // CREATE APPOINTMENT - DATABASE ERROR
     @Test
@@ -176,21 +171,20 @@ public class appointmentDAOTest {
         appointment.setAppointmentDate("2026-08-15");
         appointment.setAppointmentTime("10:30");
 
-
         when(connection.prepareStatement(
                 anyString(),
                 eq(Statement.RETURN_GENERATED_KEYS)))
                 .thenThrow(
-                        new SQLException("Database connection error")
+                        new SQLException(
+                                "Database connection error"
+                        )
                 );
-
 
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             assertThrows(
                     SQLException.class,
@@ -199,6 +193,7 @@ public class appointmentDAOTest {
             );
         }
     }
+
 
     // GET APPOINTMENT BY ID - FOUND
     @Test
@@ -218,10 +213,14 @@ public class appointmentDAOTest {
                 .thenReturn(10);
 
         when(resultSet.getDate("appointmentDate"))
-                .thenReturn(Date.valueOf("2026-08-15"));
+                .thenReturn(
+                        Date.valueOf("2026-08-15")
+                );
 
         when(resultSet.getTime("appointmentTime"))
-                .thenReturn(Time.valueOf("10:30:00"));
+                .thenReturn(
+                        Time.valueOf("10:30:00")
+                );
 
         when(resultSet.getString("treatmentType"))
                 .thenReturn("Cleaning");
@@ -235,17 +234,14 @@ public class appointmentDAOTest {
         when(resultSet.getString("dentistName"))
                 .thenReturn("Dr. Perera");
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             Appointment appointment =
                     appointmentDAO.getAppointmentById(10);
-
 
             assertNotNull(appointment);
 
@@ -284,11 +280,11 @@ public class appointmentDAOTest {
                     appointment.getDentistName()
             );
 
-
             verify(preparedStatement)
                     .setInt(1, 10);
         }
     }
+
 
     // GET APPOINTMENT BY ID - NOT FOUND
     @Test
@@ -304,25 +300,22 @@ public class appointmentDAOTest {
         when(resultSet.next())
                 .thenReturn(false);
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             Appointment appointment =
                     appointmentDAO.getAppointmentById(999);
 
-
             assertNull(appointment);
-
 
             verify(preparedStatement)
                     .setInt(1, 999);
         }
     }
+
 
     // GET APPOINTMENT BY ID - DATABASE ERROR
     @Test
@@ -334,13 +327,11 @@ public class appointmentDAOTest {
                         new SQLException("Database error")
                 );
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             assertThrows(
                     SQLException.class,
@@ -349,6 +340,7 @@ public class appointmentDAOTest {
             );
         }
     }
+
 
     // GET APPOINTMENTS BY PATIENT - SUCCESS
     @Test
@@ -361,12 +353,10 @@ public class appointmentDAOTest {
         when(preparedStatement.executeQuery())
                 .thenReturn(resultSet);
 
-
         when(resultSet.next())
                 .thenReturn(true)
                 .thenReturn(true)
                 .thenReturn(false);
-
 
         when(resultSet.getInt("appointmentId"))
                 .thenReturn(1)
@@ -406,18 +396,15 @@ public class appointmentDAOTest {
                         "Dr. Perera"
                 );
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             List<Appointment> appointments =
                     appointmentDAO
                             .getAppointmentsByPatientId(5);
-
 
             assertNotNull(appointments);
 
@@ -438,13 +425,13 @@ public class appointmentDAOTest {
                             .getTreatmentType()
             );
 
-
             verify(preparedStatement)
                     .setInt(1, 5);
         }
     }
 
-    // GET APPOINTMENTS BY PATIENT - NO RESULTS
+
+    // GET APPOINTMENTS BY PATIENT - EMPTY
     @Test
     void testGetAppointmentsByPatientIdEmpty()
             throws Exception {
@@ -458,18 +445,15 @@ public class appointmentDAOTest {
         when(resultSet.next())
                 .thenReturn(false);
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             List<Appointment> appointments =
                     appointmentDAO
                             .getAppointmentsByPatientId(99);
-
 
             assertNotNull(appointments);
 
@@ -477,13 +461,12 @@ public class appointmentDAOTest {
                     appointments.isEmpty()
             );
 
-
             verify(preparedStatement)
                     .setInt(1, 99);
         }
     }
 
-
+    
     // GET ALL APPOINTMENTS - SUCCESS
     @Test
     void testGetAllAppointmentsSuccess()
@@ -495,11 +478,9 @@ public class appointmentDAOTest {
         when(statement.executeQuery(anyString()))
                 .thenReturn(resultSet);
 
-
         when(resultSet.next())
                 .thenReturn(true)
                 .thenReturn(false);
-
 
         when(resultSet.getInt("appointmentId"))
                 .thenReturn(1);
@@ -526,18 +507,15 @@ public class appointmentDAOTest {
         when(resultSet.getString("dentistName"))
                 .thenReturn("Dr. Perera");
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             List<Appointment> appointments =
                     appointmentDAO
                             .getAllAppointments();
-
 
             assertNotNull(appointments);
 
@@ -553,7 +531,7 @@ public class appointmentDAOTest {
             );
 
             assertEquals(
-                    "John Silva",
+                    "Karan Silva",
                     appointments.get(0)
                             .getPatientName()
             );
@@ -563,7 +541,6 @@ public class appointmentDAOTest {
                     appointments.get(0)
                             .getTreatmentType()
             );
-
 
             verify(connection)
                     .createStatement();
@@ -585,18 +562,15 @@ public class appointmentDAOTest {
         when(resultSet.next())
                 .thenReturn(false);
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             List<Appointment> appointments =
                     appointmentDAO
                             .getAllAppointments();
-
 
             assertNotNull(appointments);
 
@@ -605,7 +579,6 @@ public class appointmentDAOTest {
             );
         }
     }
-
 
     // GET ALL APPOINTMENTS - DATABASE ERROR
     @Test
@@ -617,13 +590,11 @@ public class appointmentDAOTest {
                         new SQLException("Database error")
                 );
 
-
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             assertThrows(
                     SQLException.class,
@@ -656,12 +627,16 @@ public class appointmentDAOTest {
         );
 
 
+        when(connection.prepareStatement(
+                anyString(),
+                eq(Statement.RETURN_GENERATED_KEYS)))
+                .thenReturn(preparedStatement);
+
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             assertThrows(
                     IllegalArgumentException.class,
@@ -693,13 +668,16 @@ public class appointmentDAOTest {
                 "invalid-time"
         );
 
+        when(connection.prepareStatement(
+                anyString(),
+                eq(Statement.RETURN_GENERATED_KEYS)))
+                .thenReturn(preparedStatement);
 
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection)
-                  .thenReturn(connection);
-
+                    .thenReturn(connection);
 
             assertThrows(
                     IllegalArgumentException.class,

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -13,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach; 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -59,8 +58,7 @@ public class billDAOTest {
         bill.setPaymentMethod(Bill.PAYMENT_CASH);
     }
 
-
-    // CREATE BILL SUCCESS
+    // CREATE BILL - SUCCESS
     @Test
     void testCreateBillSuccess() throws Exception {
 
@@ -87,15 +85,11 @@ public class billDAOTest {
             mocked.when(DatabaseConnection::getConnection)
                     .thenReturn(connection);
 
-            boolean result =
-                    billDAO.createBill(bill);
+            boolean result = billDAO.createBill(bill);
 
             assertTrue(result);
 
-            assertEquals(
-                    25,
-                    bill.getBillId()
-            );
+            assertEquals(25, bill.getBillId());
 
             verify(preparedStatement)
                     .setDate(
@@ -110,52 +104,28 @@ public class billDAOTest {
                     .setInt(3, 5);
 
             verify(preparedStatement)
-                    .setString(
-                            4,
-                            "Jenny Perera"
-                    );
+                    .setString(4, "Jenny Perera");
 
             verify(preparedStatement)
-                    .setString(
-                            5,
-                            "0771234567"
-                    );
+                    .setString(5, "0771234567");
 
             verify(preparedStatement)
-                    .setString(
-                            6,
-                            "Dental Cleaning"
-                    );
+                    .setString(6, "Dental Cleaning");
 
             verify(preparedStatement)
-                    .setDouble(
-                            7,
-                            100.00
-                    );
+                    .setDouble(7, 100.00);
 
             verify(preparedStatement)
-                    .setDouble(
-                            8,
-                            50.00
-                    );
+                    .setDouble(8, 50.00);
 
             verify(preparedStatement)
-                    .setDouble(
-                            9,
-                            150.00
-                    );
+                    .setDouble(9, 150.00);
 
             verify(preparedStatement)
-                    .setDouble(
-                            10,
-                            100.00
-                    );
+                    .setDouble(10, 100.00);
 
             verify(preparedStatement)
-                    .setString(
-                            11,
-                            Bill.PAYMENT_CASH
-                    );
+                    .setString(11, Bill.PAYMENT_CASH);
 
             verify(preparedStatement)
                     .executeUpdate();
@@ -165,8 +135,7 @@ public class billDAOTest {
         }
     }
 
-
-    //  CREATE BILL FAILURE
+    // CREATE BILL - FAILURE
     @Test
     void testCreateBillFailure() throws Exception {
 
@@ -184,8 +153,7 @@ public class billDAOTest {
             mocked.when(DatabaseConnection::getConnection)
                     .thenReturn(connection);
 
-            boolean result =
-                    billDAO.createBill(bill);
+            boolean result = billDAO.createBill(bill);
 
             assertFalse(result);
 
@@ -197,8 +165,8 @@ public class billDAOTest {
         }
     }
 
-
-    //  CREATE BILL DATABASE ERROR
+ 
+    // CREATE BILL - DATABASE ERROR
     @Test
     void testCreateBillSQLException() throws Exception {
 
@@ -225,7 +193,7 @@ public class billDAOTest {
         }
     }
 
-    // GET BILL BY ID SUCCESS
+    // GET BILL BY ID - SUCCESS
     @Test
     void testGetBillByIdSuccess() throws Exception {
 
@@ -251,31 +219,11 @@ public class billDAOTest {
 
             assertNotNull(result);
 
-            assertEquals(
-                    1,
-                    result.getBillId()
-            );
-
-            assertEquals(
-                    10,
-                    result.getAppointmentId()
-            );
-
-            assertEquals(
-                    5,
-                    result.getPatientId()
-            );
-
-            assertEquals(
-                    "Jenny Perera",
-                    result.getPatientName()
-            );
-
-            assertEquals(
-                    "0771234567",
-                    result.getPatientContact()
-            );
-
+            assertEquals(1, result.getBillId());
+            assertEquals(10, result.getAppointmentId());
+            assertEquals(5, result.getPatientId());
+            assertEquals("Jenny Perera", result.getPatientName());
+            assertEquals("0771234567", result.getPatientContact());
             assertEquals(
                     "Dental Cleaning",
                     result.getTreatmentType()
@@ -318,8 +266,7 @@ public class billDAOTest {
         }
     }
 
-
-    // GET BILL BY ID NOT FOUND
+    // GET BILL BY ID - NOT FOUND
     @Test
     void testGetBillByIdNotFound() throws Exception {
 
@@ -351,8 +298,7 @@ public class billDAOTest {
         }
     }
 
-
-    // GET BILL BY ID DATABASE ERROR
+    // GET BILL BY ID - DATABASE ERROR
     @Test
     void testGetBillByIdSQLException() throws Exception {
 
@@ -377,8 +323,7 @@ public class billDAOTest {
         }
     }
 
-
-    // GET ALL BILLS
+    // GET ALL BILLS - SUCCESS
     @Test
     void testGetAllBills() throws Exception {
 
@@ -388,12 +333,78 @@ public class billDAOTest {
         when(statement.executeQuery(anyString()))
                 .thenReturn(resultSet);
 
+   
         when(resultSet.next())
                 .thenReturn(true)
                 .thenReturn(true)
                 .thenReturn(false);
 
-        mockBillResultSet();
+ 
+        when(resultSet.getInt("billId"))
+                .thenReturn(1)
+                .thenReturn(2);
+
+        when(resultSet.getDate("billDate"))
+                .thenReturn(
+                        Date.valueOf("2026-08-11"),
+                        Date.valueOf("2026-08-10")
+                );
+
+        when(resultSet.getInt("appointmentId"))
+                .thenReturn(10)
+                .thenReturn(11);
+
+        when(resultSet.getInt("patientId"))
+                .thenReturn(5)
+                .thenReturn(6);
+
+        when(resultSet.getString("patientName"))
+                .thenReturn(
+                        "Jenny Perera",
+                        "John Smith"
+                );
+
+        when(resultSet.getString("patientContact"))
+                .thenReturn(
+                        "0771234567",
+                        "0712345678"
+                );
+
+        when(resultSet.getString("treatmentType"))
+                .thenReturn(
+                        "Dental Cleaning",
+                        "Dental Filling"
+                );
+
+        when(resultSet.getDouble("treatmentCost"))
+                .thenReturn(
+                        100.00,
+                        150.00
+                );
+
+        when(resultSet.getDouble("consultationFee"))
+                .thenReturn(
+                        50.00,
+                        50.00
+                );
+
+        when(resultSet.getDouble("totalAmount"))
+                .thenReturn(
+                        150.00,
+                        200.00
+                );
+
+        when(resultSet.getDouble("amountPaid"))
+                .thenReturn(
+                        100.00,
+                        200.00
+                );
+
+        when(resultSet.getString("paymentMethod"))
+                .thenReturn(
+                        Bill.PAYMENT_CASH,
+                        Bill.PAYMENT_CARD
+                );
 
         try (MockedStatic<DatabaseConnection> mocked =
                      Mockito.mockStatic(DatabaseConnection.class)) {
@@ -406,19 +417,50 @@ public class billDAOTest {
 
             assertNotNull(bills);
 
-            assertEquals(
-                    2,
-                    bills.size()
-            );
+            assertEquals(2, bills.size());
 
+            // First bill
             assertEquals(
                     1,
                     bills.get(0).getBillId()
             );
 
             assertEquals(
-                    "John Smith",
+                    "Jenny Perera",
                     bills.get(0).getPatientName()
+            );
+
+            assertEquals(
+                    "Dental Cleaning",
+                    bills.get(0).getTreatmentType()
+            );
+
+            assertEquals(
+                    150.00,
+                    bills.get(0).getTotalAmount(),
+                    0.001
+            );
+
+            // Second bill
+            assertEquals(
+                    2,
+                    bills.get(1).getBillId()
+            );
+
+            assertEquals(
+                    "John Smith",
+                    bills.get(1).getPatientName()
+            );
+
+            assertEquals(
+                    "Dental Filling",
+                    bills.get(1).getTreatmentType()
+            );
+
+            assertEquals(
+                    200.00,
+                    bills.get(1).getTotalAmount(),
+                    0.001
             );
 
             verify(statement)
@@ -428,7 +470,7 @@ public class billDAOTest {
         }
     }
 
-    // GET ALL BILLS EMPTY
+    // GET ALL BILLS - EMPTY
     @Test
     void testGetAllBillsEmpty() throws Exception {
 
@@ -452,14 +494,11 @@ public class billDAOTest {
 
             assertNotNull(bills);
 
-            assertTrue(
-                    bills.isEmpty()
-            );
+            assertTrue(bills.isEmpty());
         }
     }
 
-
-    //  UPDATE PAYMENT SUCCESS
+    // UPDATE PAYMENT - SUCCESS
     @Test
     void testUpdatePaymentSuccess() throws Exception {
 
@@ -485,10 +524,7 @@ public class billDAOTest {
             assertTrue(result);
 
             verify(preparedStatement)
-                    .setDouble(
-                            1,
-                            125.00
-                    );
+                    .setDouble(1, 125.00);
 
             verify(preparedStatement)
                     .setString(
@@ -497,10 +533,7 @@ public class billDAOTest {
                     );
 
             verify(preparedStatement)
-                    .setInt(
-                            3,
-                            1
-                    );
+                    .setInt(3, 1);
 
             verify(preparedStatement)
                     .executeUpdate();
@@ -508,7 +541,7 @@ public class billDAOTest {
     }
 
 
-    // UPDATE PAYMENT FAILURE
+    // UPDATE PAYMENT - FAILURE
     @Test
     void testUpdatePaymentFailure() throws Exception {
 
@@ -536,7 +569,7 @@ public class billDAOTest {
     }
 
 
-    // UPDATE PAYMENT DATABASE ERROR
+    // UPDATE PAYMENT - DATABASE ERROR
     @Test
     void testUpdatePaymentSQLException() throws Exception {
 
@@ -565,8 +598,7 @@ public class billDAOTest {
         }
     }
 
-
-    // CREATE BILL WITHOUT BILL DATE
+    // CREATE BILL - WITHOUT BILL DATE
     @Test
     void testCreateBillWithoutBillDate() throws Exception {
 
@@ -614,7 +646,7 @@ public class billDAOTest {
     }
 
 
-    // HELPER METHOD
+    // HELPER METHOD FOR SINGLE BILL
     private void mockBillResultSet()
             throws SQLException {
 

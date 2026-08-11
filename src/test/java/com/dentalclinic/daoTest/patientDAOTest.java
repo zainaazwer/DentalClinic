@@ -1,6 +1,7 @@
 package com.dentalclinic.daoTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.sql.Connection;
@@ -18,361 +19,411 @@ import com.dentalclinic.model.Patient;
 
 public class patientDAOTest {
 
-// CREATE PATIENT
-@Test
-void testCreatePatient() throws Exception {
+    // CREATE PATIENT
+    @Test
+    void testCreatePatient() throws Exception {
 
-    Patient patient = new Patient(
-            1,
-            "John Silva",
-            "Colombo",
-            "0771234567"
-    );
+        Patient patient = new Patient(
+                1,
+                "John Silva",
+                "Colombo",
+                "0771234567"
+        );
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    when(statement.executeUpdate())
-            .thenReturn(1);
+        when(statement.executeUpdate())
+                .thenReturn(1);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        boolean result =
-                patientDAO.createPatient(patient);
+            boolean result =
+                    patientDAO.createPatient(patient);
 
-        assertTrue(result);
+            assertTrue(result);
 
-        verify(statement).setString(1, "John Silva");
-        verify(statement).setString(2, "Colombo");
-        verify(statement).setString(3, "0771234567");
+            verify(statement)
+                    .setString(1, "John Silva");
 
-        verify(statement).executeUpdate();
+            verify(statement)
+                    .setString(2, "Colombo");
+
+            verify(statement)
+                    .setString(3, "0771234567");
+
+            verify(statement)
+                    .executeUpdate();
+        }
     }
-}
 
 
-@Test
-void testCreatePatientFails() throws Exception {
+    // CREATE PATIENT - FAILURE
+    @Test
+    void testCreatePatientFails() throws Exception {
 
-    Patient patient = new Patient(
-            1,
-            "John Silva",
-            "Colombo",
-            "0771234567"
-    );
+        Patient patient = new Patient(
+                1,
+                "John Silva",
+                "Colombo",
+                "0771234567"
+        );
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    when(statement.executeUpdate())
-            .thenReturn(0);
+        when(statement.executeUpdate())
+                .thenReturn(0);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        boolean result =
-                patientDAO.createPatient(patient);
+            boolean result =
+                    patientDAO.createPatient(patient);
 
-        assertFalse(result);
+            assertFalse(result);
+        }
     }
-}
 
-// GET PATIENT BY ID
-@Test
-void testGetPatientById() throws Exception {
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
-    ResultSet resultSet = mock(ResultSet.class);
+    // GET PATIENT BY ID
+    @Test
+    void testGetPatientById() throws Exception {
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
+        ResultSet resultSet = mock(ResultSet.class);
 
-    when(statement.executeQuery())
-            .thenReturn(resultSet);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    when(resultSet.next())
-            .thenReturn(true);
+        when(statement.executeQuery())
+                .thenReturn(resultSet);
 
-    when(resultSet.getInt("patientId"))
-            .thenReturn(1);
+        when(resultSet.next())
+                .thenReturn(true);
 
-    when(resultSet.getString("fullName"))
-            .thenReturn("John Weera");
+        when(resultSet.getInt("patientId"))
+                .thenReturn(1);
 
-    when(resultSet.getString("address"))
-            .thenReturn("Colombo");
+        when(resultSet.getString("fullName"))
+                .thenReturn("John Weera");
 
-    when(resultSet.getString("phoneNumber"))
-            .thenReturn("0771234567");
+        when(resultSet.getString("address"))
+                .thenReturn("Colombo");
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        when(resultSet.getString("phoneNumber"))
+                .thenReturn("0771234567");
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        PatientDAO patientDAO = new PatientDAO();
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        Patient patient =
-                patientDAO.getPatientById(1);
+            PatientDAO patientDAO = new PatientDAO();
 
-        assertNotNull(patient);
+            Patient patient =
+                    patientDAO.getPatientById(1);
 
-        assertEquals(1,
-                patient.getPatientId());
+            assertNotNull(patient);
 
-        assertEquals("John Weera",
-                patient.getFullName());
+            assertEquals(
+                    1,
+                    patient.getPatientId()
+            );
 
-        assertEquals("Colombo",
-                patient.getAddress());
+            assertEquals(
+                    "John Weera",
+                    patient.getFullName()
+            );
 
-        assertEquals("0771234567",
-                patient.getPhoneNumber());
+            assertEquals(
+                    "Colombo",
+                    patient.getAddress()
+            );
 
-        verify(statement).setInt(1, 1);
-        verify(statement).executeQuery();
+            assertEquals(
+                    "0771234567",
+                    patient.getPhoneNumber()
+            );
+
+            verify(statement)
+                    .setInt(1, 1);
+
+            verify(statement)
+                    .executeQuery();
+        }
     }
-}
 
 
-@Test
-void testGetPatientByIdNotFound() throws Exception {
+    // GET PATIENT BY ID - NOT FOUND
+    @Test
+    void testGetPatientByIdNotFound() throws Exception {
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
-    ResultSet resultSet = mock(ResultSet.class);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
+        ResultSet resultSet = mock(ResultSet.class);
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    when(statement.executeQuery())
-            .thenReturn(resultSet);
+        when(statement.executeQuery())
+                .thenReturn(resultSet);
 
-    when(resultSet.next())
-            .thenReturn(false);
+        when(resultSet.next())
+                .thenReturn(false);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        Patient patient =
-                patientDAO.getPatientById(999);
+            Patient patient =
+                    patientDAO.getPatientById(999);
 
-        assertNull(patient);
+            assertNull(patient);
+        }
     }
-}
 
 
-// GET ALL PATIENTS
-@Test
-void testGetAllPatients() throws Exception {
+    // GET ALL PATIENTS
+    @Test
+    void testGetAllPatients() throws Exception {
 
-    Connection connection = mock(Connection.class);
-    Statement statement = mock(Statement.class);
-    ResultSet resultSet = mock(ResultSet.class);
+        Connection connection = mock(Connection.class);
+        Statement statement = mock(Statement.class);
+        ResultSet resultSet = mock(ResultSet.class);
 
-    when(connection.createStatement())
-            .thenReturn(statement);
+        when(connection.createStatement())
+                .thenReturn(statement);
 
-    when(statement.executeQuery(anyString()))
-            .thenReturn(resultSet);
+        when(statement.executeQuery(anyString()))
+                .thenReturn(resultSet);
 
-    when(resultSet.next())
-            .thenReturn(true)
-            .thenReturn(true)
-            .thenReturn(false);
+        when(resultSet.next())
+                .thenReturn(true)
+                .thenReturn(true)
+                .thenReturn(false);
 
-    when(resultSet.getInt("patientId"))
-            .thenReturn(1)
-            .thenReturn(2);
+        when(resultSet.getInt("patientId"))
+                .thenReturn(1)
+                .thenReturn(2);
 
-    when(resultSet.getString("fullName"))
-            .thenReturn("John Weera")
-            .thenReturn("Jenny Perera");
+        when(resultSet.getString("fullName"))
+                .thenReturn("John Weera")
+                .thenReturn("Jenny Perera");
 
-    when(resultSet.getString("address"))
-            .thenReturn("Colombo")
-            .thenReturn("Kandy");
+        when(resultSet.getString("address"))
+                .thenReturn("Colombo")
+                .thenReturn("Kandy");
 
-    when(resultSet.getString("phoneNumber"))
-            .thenReturn("0771234567")
-            .thenReturn("0712345678");
+        when(resultSet.getString("phoneNumber"))
+                .thenReturn("0771234567")
+                .thenReturn("0712345678");
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        List<Patient> patients =
-                patientDAO.getAllPatients();
+            List<Patient> patients =
+                    patientDAO.getAllPatients();
 
-        assertNotNull(patients);
+            assertNotNull(patients);
 
-        assertEquals(2, patients.size());
+            assertEquals(
+                    2,
+                    patients.size()
+            );
 
-        assertEquals("John Weera",
-                patients.get(0).getFullName());
+            assertEquals(
+                    "John Weera",
+                    patients.get(0).getFullName()
+            );
 
-        assertEquals("Jenny Perera",
-                patients.get(1).getFullName());
+            assertEquals(
+                    "Jenny Perera",
+                    patients.get(1).getFullName()
+            );
 
-        assertEquals("Colombo",
-                patients.get(0).getAddress());
+            assertEquals(
+                    "Colombo",
+                    patients.get(0).getAddress()
+            );
 
-        assertEquals("0771234567",
-                patients.get(0).getPhoneNumber());
+            assertEquals(
+                    "0771234567",
+                    patients.get(0).getPhoneNumber()
+            );
+        }
     }
-}
 
 
-@Test
-void testGetAllPatientsEmpty() throws Exception {
+    // GET ALL PATIENTS - EMPTY
+    @Test
+    void testGetAllPatientsEmpty() throws Exception {
 
-    Connection connection = mock(Connection.class);
-    Statement statement = mock(Statement.class);
-    ResultSet resultSet = mock(ResultSet.class);
+        Connection connection = mock(Connection.class);
+        Statement statement = mock(Statement.class);
+        ResultSet resultSet = mock(ResultSet.class);
 
-    when(connection.createStatement())
-            .thenReturn(statement);
+        when(connection.createStatement())
+                .thenReturn(statement);
 
-    when(statement.executeQuery(anyString()))
-            .thenReturn(resultSet);
+        when(statement.executeQuery(anyString()))
+                .thenReturn(resultSet);
 
-    when(resultSet.next())
-            .thenReturn(false);
+        when(resultSet.next())
+                .thenReturn(false);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        List<Patient> patients =
-                patientDAO.getAllPatients();
+            List<Patient> patients =
+                    patientDAO.getAllPatients();
 
-        assertNotNull(patients);
-        assertTrue(patients.isEmpty());
+            assertNotNull(patients);
+
+            assertTrue(
+                    patients.isEmpty()
+            );
+        }
     }
-}
 
-// UPDATE PATIENT
-@Test
-void testUpdatePatient() throws Exception {
 
-    Patient patient = new Patient(
-            1,
-            "John Silva Updated",
-            "Colombo",
-            "0711111111"
-    );
+    // UPDATE PATIENT
+    @Test
+    void testUpdatePatient() throws Exception {
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
+        Patient patient = new Patient(
+                1,
+                "John Silva Updated",
+                "Colombo",
+                "0711111111"
+        );
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
 
-    when(statement.executeUpdate())
-            .thenReturn(1);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        when(statement.executeUpdate())
+                .thenReturn(1);
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        PatientDAO patientDAO = new PatientDAO();
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        boolean result =
-                patientDAO.updatePatient(patient);
+            PatientDAO patientDAO = new PatientDAO();
 
-        assertTrue(result);
+            boolean result =
+                    patientDAO.updatePatient(patient);
 
-        verify(statement)
-                .setString(1, "John Weera Updated");
+            assertTrue(result);
 
-        verify(statement)
-                .setString(2, "Colombo");
+            // CORRECTED VALUE
+            verify(statement)
+                    .setString(
+                            1,
+                            "John Silva Updated"
+                    );
 
-        verify(statement)
-                .setString(3, "0711111111");
+            verify(statement)
+                    .setString(
+                            2,
+                            "Colombo"
+                    );
 
-        verify(statement)
-                .setInt(4, 1);
+            verify(statement)
+                    .setString(
+                            3,
+                            "0711111111"
+                    );
 
-        verify(statement).executeUpdate();
+            verify(statement)
+                    .setInt(
+                            4,
+                            1
+                    );
+
+            verify(statement)
+                    .executeUpdate();
+        }
     }
-}
 
 
-@Test
-void testUpdatePatientFails() throws Exception {
+    // UPDATE PATIENT - FAILURE
+    @Test
+    void testUpdatePatientFails() throws Exception {
 
-    Patient patient = new Patient(
-            1,
-            "John Weera",
-            "Colombo",
-            "0771234567"
-    );
+        Patient patient = new Patient(
+                1,
+                "John Weera",
+                "Colombo",
+                "0771234567"
+        );
 
-    Connection connection = mock(Connection.class);
-    PreparedStatement statement = mock(PreparedStatement.class);
+        Connection connection = mock(Connection.class);
+        PreparedStatement statement = mock(PreparedStatement.class);
 
-    when(connection.prepareStatement(anyString()))
-            .thenReturn(statement);
+        when(connection.prepareStatement(anyString()))
+                .thenReturn(statement);
 
-    when(statement.executeUpdate())
-            .thenReturn(0);
+        when(statement.executeUpdate())
+                .thenReturn(0);
 
-    try (MockedStatic<DatabaseConnection> mockedConnection =
-                 mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mockedConnection =
+                     mockStatic(DatabaseConnection.class)) {
 
-        mockedConnection
-                .when(DatabaseConnection::getConnection)
-                .thenReturn(connection);
+            mockedConnection
+                    .when(DatabaseConnection::getConnection)
+                    .thenReturn(connection);
 
-        PatientDAO patientDAO = new PatientDAO();
+            PatientDAO patientDAO = new PatientDAO();
 
-        boolean result =
-                patientDAO.updatePatient(patient);
+            boolean result =
+                    patientDAO.updatePatient(patient);
 
-        assertFalse(result);
+            assertFalse(result);
+        }
     }
-}
-
 }

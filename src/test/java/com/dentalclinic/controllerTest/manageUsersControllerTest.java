@@ -1,15 +1,18 @@
 package com.dentalclinic.controllerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,7 +46,8 @@ public class manageUsersControllerTest {
         dispatcher = mock(RequestDispatcher.class);
 
         Field userDAOField =
-                ManageUsersController.class.getDeclaredField("userDAO");
+                ManageUsersController.class
+                        .getDeclaredField("userDAO");
 
         userDAOField.setAccessible(true);
         userDAOField.set(controller, userDAO);
@@ -52,15 +56,11 @@ public class manageUsersControllerTest {
         when(request.getSession(false))
                 .thenReturn(session);
 
-        // Mock context path
-        when(request.getContextPath())
-                .thenReturn("/SunriseDentalClinic");
-
         // Mock dispatcher
         when(request.getRequestDispatcher(anyString()))
                 .thenReturn(dispatcher);
 
-        // Create Admin user
+        // Default logged-in Admin
         User admin = new User();
 
         admin.setUserId(1);
@@ -100,7 +100,7 @@ public class manageUsersControllerTest {
         User user1 = new User();
 
         user1.setUserId(1);
-        user1.setUsername("Jake");
+        user1.setUsername("jake");
         user1.setFullName("Jake Drake");
         user1.setEmail("jake@gmail.com");
         user1.setRole("Receptionist");
@@ -111,7 +111,7 @@ public class manageUsersControllerTest {
         user2.setUserId(2);
         user2.setUsername("harry");
         user2.setFullName("Harry Pura");
-        user2.setEmail("Harry@gmail.com");
+        user2.setEmail("harry@gmail.com");
         user2.setRole("Receptionist");
 
 
@@ -126,12 +126,10 @@ public class manageUsersControllerTest {
         callDoGet();
 
 
-        // DAO should be called
         verify(userDAO)
                 .getAllUsers();
 
 
-        // Users should be placed in request
         verify(request)
                 .setAttribute(
                         "users",
@@ -139,14 +137,12 @@ public class manageUsersControllerTest {
                 );
 
 
-        // Correct JSP should be opened
         verify(request)
                 .getRequestDispatcher(
                         "ManageUsers.jsp"
                 );
 
 
-        // JSP should receive request and response
         verify(dispatcher)
                 .forward(
                         request,
@@ -154,7 +150,6 @@ public class manageUsersControllerTest {
                 );
 
 
-        // No redirect should happen
         verify(response, never())
                 .sendRedirect(anyString());
     }
@@ -163,8 +158,12 @@ public class manageUsersControllerTest {
     @Test
     void testAdminWithNoUsers() throws Exception {
 
+        List<User> users =
+                Collections.emptyList();
+
+
         when(userDAO.getAllUsers())
-                .thenReturn(Collections.emptyList());
+                .thenReturn(users);
 
 
         callDoGet();
@@ -177,7 +176,7 @@ public class manageUsersControllerTest {
         verify(request)
                 .setAttribute(
                         "users",
-                        Collections.emptyList()
+                        users
                 );
 
 
@@ -194,9 +193,9 @@ public class manageUsersControllerTest {
                 );
     }
 
-    // USER NOT LOGGED IN
+    // NO SESSION
     @Test
-    void testNotLoggedIn() throws Exception {
+    void testNoSessionRedirectsToLogin() throws Exception {
 
         when(request.getSession(false))
                 .thenReturn(null);
@@ -214,13 +213,15 @@ public class manageUsersControllerTest {
 
 
         verify(request, never())
-                .getRequestDispatcher("ManageUsers.jsp");
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
+                );
     }
-
 
     // SESSION EXISTS BUT NO USER
     @Test
-    void testNoUserInSession() throws Exception {
+    void testNoUserInSessionRedirectsToLogin()
+            throws Exception {
 
         when(session.getAttribute("user"))
                 .thenReturn(null);
@@ -235,11 +236,19 @@ public class manageUsersControllerTest {
 
         verify(userDAO, never())
                 .getAllUsers();
+
+
+        verify(request, never())
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
+                );
     }
 
-    //  RECEPTIONIST CANNOT ACCESS
+    
+    // RECEPTIONIST CANNOT ACCESS
     @Test
-    void testReceptionistCannotAccess() throws Exception {
+    void testReceptionistCannotAccess()
+            throws Exception {
 
         User receptionist = new User();
 
@@ -265,27 +274,33 @@ public class manageUsersControllerTest {
 
 
         verify(request, never())
-                .getRequestDispatcher("ManageUsers.jsp");
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
+                );
     }
 
-    //  ADMINISTRATOR ROLE CAN ACCESS
+    //  ADMINISTRATOR CAN ACCESS
     @Test
-    void testAdministratorRoleCanAccess() throws Exception {
+    void testAdministratorRoleCanAccess()
+            throws Exception {
 
         User administrator = new User();
 
         administrator.setUserId(1);
-        administrator.setUsername("ava");
-        administrator.setFullName("Ava Drake");
-        administrator.setRole("Admin");
+        administrator.setUsername("administrator");
+        administrator.setFullName("Administrator");
+        administrator.setEmail("administrator@gmail.com");
+        administrator.setRole("Administrator");
+
+
+        List<User> users =
+                Collections.singletonList(
+                        administrator
+                );
 
 
         when(session.getAttribute("user"))
                 .thenReturn(administrator);
-
-
-        List<User> users =
-                Collections.singletonList(administrator);
 
 
         when(userDAO.getAllUsers())
@@ -306,10 +321,55 @@ public class manageUsersControllerTest {
                 );
 
 
+        verify(request)
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
+                );
+
+
         verify(dispatcher)
                 .forward(
                         request,
                         response
+                );
+
+
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
+
+    @Test
+    void testLowercaseAdminCannotAccess()
+            throws Exception {
+
+        User admin = new User();
+
+        admin.setUserId(1);
+        admin.setUsername("admin");
+        admin.setFullName("Admin");
+        admin.setEmail("admin@gmail.com");
+
+        admin.setRole("admin");
+
+
+        when(session.getAttribute("user"))
+                .thenReturn(admin);
+
+
+        callDoGet();
+
+
+        verify(response)
+                .sendRedirect("Dashboard.jsp");
+
+
+        verify(userDAO, never())
+                .getAllUsers();
+
+
+        verify(request, never())
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
                 );
     }
 
@@ -319,7 +379,7 @@ public class manageUsersControllerTest {
 
         when(userDAO.getAllUsers())
                 .thenThrow(
-                        new java.sql.SQLException(
+                        new SQLException(
                                 "Database connection failed"
                         )
                 );
@@ -334,8 +394,8 @@ public class manageUsersControllerTest {
 
         verify(request)
                 .setAttribute(
-                        eq("error"),
-                        eq("Database connection failed")
+                        "error",
+                        "Database connection failed"
                 );
 
 
@@ -352,31 +412,97 @@ public class manageUsersControllerTest {
                 );
     }
 
-    // ADMIN ROLE CASE INSENSITIVE
+    // ADMIN REDIRECT IS NOT CALLED
     @Test
-    void testAdminRoleCaseInsensitive() throws Exception {
-
-        User admin = new User();
-
-        admin.setUserId(1);
-        admin.setUsername("admin");
-        admin.setFullName("Admin");
-        admin.setRole("admin");
-
-
-        when(session.getAttribute("user"))
-                .thenReturn(admin);
-
+    void testAdminDoesNotRedirect()
+            throws Exception {
 
         when(userDAO.getAllUsers())
-                .thenReturn(Collections.emptyList());
+                .thenReturn(
+                        Collections.emptyList()
+                );
 
 
         callDoGet();
 
 
-        verify(userDAO)
-                .getAllUsers();
+        verify(response, never())
+                .sendRedirect(anyString());
+
+
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
+    }
+
+    // USERS ARE PLACED IN REQUEST
+    @Test
+    void testUsersAreAddedToRequest()
+            throws Exception {
+
+        User user = new User();
+
+        user.setUserId(5);
+        user.setUsername("staff");
+        user.setFullName("Staff Member");
+        user.setEmail("staff@gmail.com");
+        user.setRole("Receptionist");
+
+
+        List<User> users =
+                Collections.singletonList(user);
+
+
+        when(userDAO.getAllUsers())
+                .thenReturn(users);
+
+
+        callDoGet();
+
+
+        verify(request)
+                .setAttribute(
+                        eq("users"),
+                        eq(users)
+                );
+    }
+
+
+    // CORRECT JSP IS USED
+    @Test
+    void testCorrectJspIsUsed()
+            throws Exception {
+
+        when(userDAO.getAllUsers())
+                .thenReturn(
+                        Collections.emptyList()
+                );
+
+
+        callDoGet();
+
+
+        verify(request)
+                .getRequestDispatcher(
+                        "ManageUsers.jsp"
+                );
+    }
+
+
+    // FORWARD TO JSP
+    @Test
+    void testRequestIsForwardedToJsp()
+            throws Exception {
+
+        when(userDAO.getAllUsers())
+                .thenReturn(
+                        Collections.emptyList()
+                );
+
+
+        callDoGet();
 
 
         verify(dispatcher)

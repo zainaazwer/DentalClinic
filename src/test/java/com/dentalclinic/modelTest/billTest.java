@@ -25,7 +25,6 @@ public class billTest {
         assertFalse(bill.getBillDate().isEmpty());
     }
 
-
     // TEST PARAMETERIZED CONSTRUCTOR
     @Test
     void testParameterizedConstructor() {
@@ -42,7 +41,6 @@ public class billTest {
         );
     }
 
-
     // TEST BILL ID
     @Test
     void testBillId() {
@@ -54,21 +52,18 @@ public class billTest {
         assertEquals(100, bill.getBillId());
     }
 
-
     // TEST BILL DATE
     @Test
     void testBillDate() {
 
         Bill bill = new Bill();
 
-        bill.setBillDate("2026-08-11 16:00:00");
+        String date = "2026-08-11 16:00:00";
 
-        assertEquals(
-                "2026-08-11 16:00:00",
-                bill.getBillDate()
-        );
+        bill.setBillDate(date);
+
+        assertEquals(date, bill.getBillDate());
     }
-
 
     // TEST APPOINTMENT ID
     @Test
@@ -81,7 +76,6 @@ public class billTest {
         assertEquals(25, bill.getAppointmentId());
     }
 
-
     // TEST PATIENT ID
     @Test
     void testPatientId() {
@@ -92,7 +86,6 @@ public class billTest {
 
         assertEquals(15, bill.getPatientId());
     }
-
 
     // TEST PATIENT NAME
     @Test
@@ -108,7 +101,6 @@ public class billTest {
         );
     }
 
-
     // TEST PATIENT CONTACT
     @Test
     void testPatientContact() {
@@ -123,7 +115,6 @@ public class billTest {
         );
     }
 
-
     // TEST TREATMENT TYPE
     @Test
     void testTreatmentType() {
@@ -137,7 +128,6 @@ public class billTest {
                 bill.getTreatmentType()
         );
     }
-
 
     // TEST TREATMENT COST
     @Test
@@ -154,7 +144,6 @@ public class billTest {
         );
     }
 
-
     // TEST CONSULTATION FEE
     @Test
     void testConsultationFee() {
@@ -169,7 +158,6 @@ public class billTest {
                 0.001
         );
     }
-
 
     // TEST TOTAL AMOUNT
     @Test
@@ -186,7 +174,6 @@ public class billTest {
         );
     }
 
-
     // TEST AMOUNT PAID
     @Test
     void testAmountPaid() {
@@ -202,7 +189,6 @@ public class billTest {
         );
     }
 
-
     // TEST PAYMENT METHOD
     @Test
     void testPaymentMethod() {
@@ -216,7 +202,6 @@ public class billTest {
                 bill.getPaymentMethod()
         );
     }
-
 
     // TEST CALCULATE TOTAL
     @Test
@@ -242,7 +227,6 @@ public class billTest {
         );
     }
 
-
     // TEST CALCULATE TOTAL WITH DIFFERENT FEES
     @Test
     void testCalculateTotalWithDifferentFees() {
@@ -252,13 +236,14 @@ public class billTest {
         bill.setTreatmentCost(350.00);
         bill.setConsultationFee(75.00);
 
+        double total = bill.calculateTotal();
+
         assertEquals(
                 425.00,
-                bill.calculateTotal(),
+                total,
                 0.001
         );
     }
-
 
     // TEST CALCULATE BALANCE
     @Test
@@ -280,7 +265,6 @@ public class billTest {
         );
     }
 
-
     // TEST FULL PAYMENT
     @Test
     void testCalculateBalanceAfterFullPayment() {
@@ -301,8 +285,7 @@ public class billTest {
         );
     }
 
-
-    // TEST PAYMENT METHOD CASH
+    // TEST PAYMENT METHOD DISPLAY - CASH
     @Test
     void testPaymentMethodDisplayCash() {
 
@@ -316,8 +299,7 @@ public class billTest {
         );
     }
 
-
-    // TEST PAYMENT METHOD CARD
+    // TEST PAYMENT METHOD DISPLAY - CARD
     @Test
     void testPaymentMethodDisplayCard() {
 
@@ -330,7 +312,6 @@ public class billTest {
                 bill.getPaymentMethodDisplay()
         );
     }
-
 
     // TEST NULL PAYMENT METHOD
     @Test
@@ -346,21 +327,19 @@ public class billTest {
         );
     }
 
-
     // TEST OTHER PAYMENT METHOD
     @Test
     void testPaymentMethodDisplayOther() {
 
         Bill bill = new Bill();
 
-        bill.setPaymentMethod("CASH");
+        bill.setPaymentMethod("ONLINE");
 
         assertEquals(
-                "CASH",
+                "ONLINE",
                 bill.getPaymentMethodDisplay()
         );
     }
-
 
     // TEST FORMATTED TOTAL
     @Test
@@ -375,7 +354,6 @@ public class billTest {
                 bill.getFormattedTotal()
         );
     }
-
 
     // TEST FORMATTED BALANCE
     @Test
@@ -396,7 +374,6 @@ public class billTest {
         );
     }
 
-
     // TEST TO STRING
     @Test
     void testToString() {
@@ -412,23 +389,11 @@ public class billTest {
 
         assertNotNull(result);
 
-        assertTrue(
-                result.contains("billId=10")
-        );
-
-        assertTrue(
-                result.contains("patientName='Jenny Perera'")
-        );
-
-        assertTrue(
-                result.contains("treatmentType='Cleaning'")
-        );
-
-        assertTrue(
-                result.contains("totalAmount=250.0")
-        );
+        assertTrue(result.contains("billId=10"));
+        assertTrue(result.contains("patientName='Jenny Perera'"));
+        assertTrue(result.contains("treatmentType='Cleaning'"));
+        assertTrue(result.contains("totalAmount=250.0"));
     }
-
 
     // TEST DEFAULT CONSULTATION FEE CONSTANT
     @Test
@@ -440,7 +405,6 @@ public class billTest {
                 0.001
         );
     }
-
 
     // TEST PAYMENT CONSTANTS
     @Test

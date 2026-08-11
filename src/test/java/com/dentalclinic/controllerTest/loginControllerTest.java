@@ -7,8 +7,8 @@ import static org.mockito.Mockito.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,6 @@ public class loginControllerTest {
         when(request.getRequestDispatcher(anyString()))
                 .thenReturn(dispatcher);
 
-
         Field authServiceField =
                 LoginController.class
                         .getDeclaredField("authService");
@@ -59,6 +58,7 @@ public class loginControllerTest {
                 authService
         );
     }
+
 
     // GET - DISPLAY LOGIN PAGE
     @Test
@@ -73,11 +73,15 @@ public class loginControllerTest {
                 .getRequestDispatcher("Login.jsp");
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
 
         verify(response, never())
                 .sendRedirect(anyString());
     }
+
 
     // GET - LOGOUT WITH SESSION
     @Test
@@ -104,6 +108,7 @@ public class loginControllerTest {
                 .getRequestDispatcher("Login.jsp");
     }
 
+
     // GET - LOGOUT WITHOUT SESSION
     @Test
     void testDoGetLogoutWithoutSession() throws Exception {
@@ -126,7 +131,8 @@ public class loginControllerTest {
                 .getRequestDispatcher("Login.jsp");
     }
 
-    // GET - LOGOUT COOKIE CHECK
+
+    // GET - LOGOUT COOKIE
     @Test
     void testDoGetLogoutDeletesCookie() throws Exception {
 
@@ -139,16 +145,22 @@ public class loginControllerTest {
         controller.callDoGet(request, response);
 
         verify(response)
-                .addCookie(argThat(cookie ->
-                        "username".equals(cookie.getName())
-                        && cookie.getMaxAge() == 0
-                ));
+                .addCookie(
+                        argThat(cookie ->
+                                "username".equals(
+                                        cookie.getName()
+                                )
+                                &&
+                                cookie.getMaxAge() == 0
+                        )
+                );
 
         verify(response)
                 .sendRedirect("Login.jsp");
     }
 
-    // POST - SUCCESSFUL LOGIN
+
+    // POST - SUCCESSFUL ADMIN LOGIN
     @Test
     void testDoPostSuccessfulLogin() throws Exception {
 
@@ -167,15 +179,20 @@ public class loginControllerTest {
         user.setEmail("admin@gmail.com");
         user.setRole("Admin");
 
+
         when(authService.login(
                 "admin",
-                "admin123"))
+                "admin"
+        ))
                 .thenReturn(user);
 
         when(request.getSession())
                 .thenReturn(session);
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(authService)
                 .login(
@@ -225,6 +242,7 @@ public class loginControllerTest {
                 .sendRedirect("Dashboard");
     }
 
+
     // POST - SUCCESSFUL RECEPTIONIST LOGIN
     @Test
     void testDoPostReceptionistLogin() throws Exception {
@@ -246,13 +264,17 @@ public class loginControllerTest {
 
         when(authService.login(
                 "staff",
-                "staff"))
+                "staff"
+        ))
                 .thenReturn(user);
 
         when(request.getSession())
                 .thenReturn(session);
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(authService)
                 .login(
@@ -268,6 +290,18 @@ public class loginControllerTest {
 
         verify(session)
                 .setAttribute(
+                        "username",
+                        "staff"
+                );
+
+        verify(session)
+                .setAttribute(
+                        "fullName",
+                        "Staff"
+                );
+
+        verify(session)
+                .setAttribute(
                         "role",
                         "Receptionist"
                 );
@@ -278,9 +312,18 @@ public class loginControllerTest {
                         "Login successful!"
                 );
 
+        verify(session)
+                .setMaxInactiveInterval(
+                        30 * 60
+                );
+
+        verify(response)
+                .addCookie(any(Cookie.class));
+
         verify(response)
                 .sendRedirect("Dashboard");
     }
+
 
     // POST - EMPTY USERNAME
     @Test
@@ -292,7 +335,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn("admin");
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -315,6 +361,7 @@ public class loginControllerTest {
                         anyString()
                 );
     }
+
 
     // POST - NULL USERNAME
     @Test
@@ -326,7 +373,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn("admin");
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -347,6 +397,7 @@ public class loginControllerTest {
                 );
     }
 
+
     // POST - EMPTY PASSWORD
     @Test
     void testDoPostEmptyPassword() throws Exception {
@@ -357,7 +408,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn("");
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -381,7 +435,6 @@ public class loginControllerTest {
                 );
     }
 
-
     // POST - NULL PASSWORD
     @Test
     void testDoPostNullPassword() throws Exception {
@@ -392,7 +445,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn(null);
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -414,7 +470,7 @@ public class loginControllerTest {
     }
 
 
-    // POST - BOTH NULL
+    // POST - BOTH VALUES NULL
     @Test
     void testDoPostBothValuesNull() throws Exception {
 
@@ -424,7 +480,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn(null);
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -458,10 +517,14 @@ public class loginControllerTest {
 
         when(authService.login(
                 "wronguser",
-                "wrongpassword"))
+                "wrongpassword"
+        ))
                 .thenReturn(null);
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(authService)
                 .login(
@@ -499,7 +562,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn("admin");
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -514,6 +580,7 @@ public class loginControllerTest {
                 );
     }
 
+
     // POST - PASSWORD WITH SPACES
     @Test
     void testDoPostPasswordWithSpaces() throws Exception {
@@ -524,7 +591,10 @@ public class loginControllerTest {
         when(request.getParameter("password"))
                 .thenReturn("   ");
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
         verify(request)
                 .setAttribute(
@@ -551,19 +621,22 @@ public class loginControllerTest {
 
         when(authService.login(
                 "admin",
-                "admin"))
+                "admin"
+        ))
                 .thenThrow(
                         new RuntimeException(
                                 "Database error"
                         )
                 );
 
+
         assertThrows(
                 ServletException.class,
-                () -> controller.callDoPost(
-                        request,
-                        response
-                )
+                () ->
+                        controller.callDoPost(
+                                request,
+                                response
+                        )
         );
 
         verify(authService)
@@ -582,16 +655,22 @@ public class loginControllerTest {
                 HttpServletResponse response)
                 throws ServletException, IOException {
 
-            super.doGet(request, response);
+            super.doGet(
+                    request,
+                    response
+            );
         }
-
 
         public void callDoPost(
                 HttpServletRequest request,
                 HttpServletResponse response)
                 throws ServletException, IOException {
 
-            super.doPost(request, response);
+            super.doPost(
+                    request,
+                    response
+            );
         }
     }
 }
+

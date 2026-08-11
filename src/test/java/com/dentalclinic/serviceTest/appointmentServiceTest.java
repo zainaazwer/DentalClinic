@@ -28,7 +28,6 @@ public class appointmentServiceTest {
     private PatientDAO patientDAO;
     private TreatmentDAO treatmentDAO;
 
-
     @BeforeEach
     void setUp() throws Exception {
 
@@ -38,9 +37,9 @@ public class appointmentServiceTest {
         patientDAO = mock(PatientDAO.class);
         treatmentDAO = mock(TreatmentDAO.class);
 
+        // Inject mocked AppointmentDAO
         Field appointmentDAOField =
-                AppointmentService.class
-                        .getDeclaredField("appointmentDAO");
+                AppointmentService.class.getDeclaredField("appointmentDAO");
 
         appointmentDAOField.setAccessible(true);
 
@@ -49,9 +48,9 @@ public class appointmentServiceTest {
                 appointmentDAO
         );
 
+        // Inject mocked PatientDAO
         Field patientDAOField =
-                AppointmentService.class
-                        .getDeclaredField("patientDAO");
+                AppointmentService.class.getDeclaredField("patientDAO");
 
         patientDAOField.setAccessible(true);
 
@@ -60,9 +59,9 @@ public class appointmentServiceTest {
                 patientDAO
         );
 
+        // Inject mocked TreatmentDAO
         Field treatmentDAOField =
-                AppointmentService.class
-                        .getDeclaredField("treatmentDAO");
+                AppointmentService.class.getDeclaredField("treatmentDAO");
 
         treatmentDAOField.setAccessible(true);
 
@@ -72,7 +71,9 @@ public class appointmentServiceTest {
         );
     }
 
-    // REGISTER APPOINTMENT - SUCCESS
+
+
+    // REGISTER APPOINTMENT
     @Test
     void testRegisterAppointmentSuccess() throws Exception {
 
@@ -83,16 +84,11 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime("10:30");
         appointment.setTreatmentType("Cleaning");
 
-
         when(appointmentDAO.createAppointment(appointment))
                 .thenReturn(true);
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertTrue(result);
 
@@ -100,13 +96,12 @@ public class appointmentServiceTest {
                 .createAppointment(appointment);
     }
 
-    // REGISTER APPOINTMENT - NULL
+
     @Test
     void testRegisterAppointmentNull() throws Exception {
 
         boolean result =
                 appointmentService.registerAppointment(null);
-
 
         assertFalse(result);
 
@@ -116,7 +111,7 @@ public class appointmentServiceTest {
         ).createAppointment(any());
     }
 
-    // REGISTER APPOINTMENT - INVALID PATIENT ID
+
     @Test
     void testRegisterAppointmentInvalidPatientId()
             throws Exception {
@@ -128,12 +123,8 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime("10:30");
         appointment.setTreatmentType("Cleaning");
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertFalse(result);
 
@@ -143,7 +134,7 @@ public class appointmentServiceTest {
         ).createAppointment(any());
     }
 
-    // REGISTER APPOINTMENT - NULL DATE
+
     @Test
     void testRegisterAppointmentNullDate()
             throws Exception {
@@ -155,12 +146,8 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime("10:30");
         appointment.setTreatmentType("Cleaning");
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertFalse(result);
 
@@ -170,7 +157,7 @@ public class appointmentServiceTest {
         ).createAppointment(any());
     }
 
-    // REGISTER APPOINTMENT - NULL TIME
+
     @Test
     void testRegisterAppointmentNullTime()
             throws Exception {
@@ -182,12 +169,8 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime(null);
         appointment.setTreatmentType("Cleaning");
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertFalse(result);
 
@@ -197,7 +180,7 @@ public class appointmentServiceTest {
         ).createAppointment(any());
     }
 
-    // REGISTER APPOINTMENT - EMPTY TREATMENT
+
     @Test
     void testRegisterAppointmentEmptyTreatment()
             throws Exception {
@@ -209,12 +192,8 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime("10:30");
         appointment.setTreatmentType("");
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertFalse(result);
 
@@ -225,7 +204,6 @@ public class appointmentServiceTest {
     }
 
 
-    // REGISTER APPOINTMENT - DAO FAILURE
     @Test
     void testRegisterAppointmentDAOFailure()
             throws Exception {
@@ -237,16 +215,11 @@ public class appointmentServiceTest {
         appointment.setAppointmentTime("10:30");
         appointment.setTreatmentType("Cleaning");
 
-
         when(appointmentDAO.createAppointment(appointment))
                 .thenReturn(false);
 
-
         boolean result =
-                appointmentService.registerAppointment(
-                        appointment
-                );
-
+                appointmentService.registerAppointment(appointment);
 
         assertFalse(result);
 
@@ -255,7 +228,7 @@ public class appointmentServiceTest {
     }
 
 
-    // GET APPOINTMENT BY ID - SUCCESS
+    // GET APPOINTMENT BY ID
     @Test
     void testGetAppointmentByIdSuccess()
             throws Exception {
@@ -267,14 +240,11 @@ public class appointmentServiceTest {
         appointment.setPatientName("Karan Silva");
         appointment.setTreatmentType("Cleaning");
 
-
         when(appointmentDAO.getAppointmentById(1))
                 .thenReturn(appointment);
 
-
         Appointment result =
                 appointmentService.getAppointmentById(1);
-
 
         assertNotNull(result);
 
@@ -292,14 +262,13 @@ public class appointmentServiceTest {
                 .getAppointmentById(1);
     }
 
-    // GET APPOINTMENT BY ID - INVALID
+
     @Test
     void testGetAppointmentByIdInvalid()
             throws Exception {
 
         Appointment result =
                 appointmentService.getAppointmentById(0);
-
 
         assertNull(result);
 
@@ -309,7 +278,7 @@ public class appointmentServiceTest {
         ).getAppointmentById(anyInt());
     }
 
-    // GET APPOINTMENT BY ID - NOT FOUND
+
     @Test
     void testGetAppointmentByIdNotFound()
             throws Exception {
@@ -317,10 +286,8 @@ public class appointmentServiceTest {
         when(appointmentDAO.getAppointmentById(999))
                 .thenReturn(null);
 
-
         Appointment result =
                 appointmentService.getAppointmentById(999);
-
 
         assertNull(result);
 
@@ -329,7 +296,23 @@ public class appointmentServiceTest {
     }
 
 
-    // GET APPOINTMENTS BY PATIENT - SUCCESS
+    @Test
+    void testGetAppointmentByIdSQLException()
+            throws Exception {
+
+        when(appointmentDAO.getAppointmentById(1))
+                .thenThrow(
+                        new SQLException("Database error")
+                );
+
+        assertThrows(
+                SQLException.class,
+                () -> appointmentService
+                        .getAppointmentById(1)
+        );
+    }
+
+    // GET APPOINTMENTS BY PATIENT ID
     @Test
     void testGetAppointmentsByPatientIdSuccess()
             throws Exception {
@@ -339,12 +322,10 @@ public class appointmentServiceTest {
         appointment1.setAppointmentId(1);
         appointment1.setPatientId(10);
 
-
         Appointment appointment2 = new Appointment();
 
         appointment2.setAppointmentId(2);
         appointment2.setPatientId(10);
-
 
         List<Appointment> appointments =
                 Arrays.asList(
@@ -352,28 +333,27 @@ public class appointmentServiceTest {
                         appointment2
                 );
 
-
         when(
                 appointmentDAO
                         .getAppointmentsByPatientId(10)
         ).thenReturn(appointments);
 
-
         List<Appointment> result =
                 appointmentService
                         .getAppointmentsByPatientId(10);
 
-
         assertNotNull(result);
 
-        assertEquals(2, result.size());
+        assertEquals(
+                2,
+                result.size()
+        );
 
         verify(appointmentDAO)
                 .getAppointmentsByPatientId(10);
     }
 
 
-    // GET APPOINTMENTS BY PATIENT - INVALID
     @Test
     void testGetAppointmentsByPatientIdInvalid()
             throws Exception {
@@ -381,7 +361,6 @@ public class appointmentServiceTest {
         List<Appointment> result =
                 appointmentService
                         .getAppointmentsByPatientId(0);
-
 
         assertNull(result);
 
@@ -403,25 +382,24 @@ public class appointmentServiceTest {
                         new Appointment()
                 );
 
-
         when(appointmentDAO.getAllAppointments())
                 .thenReturn(appointments);
-
 
         List<Appointment> result =
                 appointmentService.getAllAppointments();
 
-
         assertNotNull(result);
 
-        assertEquals(2, result.size());
+        assertEquals(
+                2,
+                result.size()
+        );
 
         verify(appointmentDAO)
                 .getAllAppointments();
     }
 
 
-    // GET ALL APPOINTMENTS - EMPTY
     @Test
     void testGetAllAppointmentsEmpty()
             throws Exception {
@@ -429,10 +407,8 @@ public class appointmentServiceTest {
         when(appointmentDAO.getAllAppointments())
                 .thenReturn(Collections.emptyList());
 
-
         List<Appointment> result =
                 appointmentService.getAllAppointments();
-
 
         assertNotNull(result);
 
@@ -443,6 +419,7 @@ public class appointmentServiceTest {
     }
 
 
+    // GET PATIENT BY ID
     @Test
     void testGetPatientByIdSuccess()
             throws Exception {
@@ -454,14 +431,11 @@ public class appointmentServiceTest {
         patient.setAddress("Colombo");
         patient.setPhoneNumber("0771234567");
 
-
         when(patientDAO.getPatientById(10))
                 .thenReturn(patient);
 
-
         Patient result =
                 appointmentService.getPatientById(10);
-
 
         assertNotNull(result);
 
@@ -470,23 +444,33 @@ public class appointmentServiceTest {
                 result.getPatientId()
         );
 
+        // Corrected: expected value matches the patient above
         assertEquals(
-                "John Silva",
+                "Karan Silva",
                 result.getFullName()
+        );
+
+        assertEquals(
+                "Colombo",
+                result.getAddress()
+        );
+
+        assertEquals(
+                "0771234567",
+                result.getPhoneNumber()
         );
 
         verify(patientDAO)
                 .getPatientById(10);
     }
 
-    // GET PATIENT BY ID - INVALID
+
     @Test
     void testGetPatientByIdInvalid()
             throws Exception {
 
         Patient result =
                 appointmentService.getPatientById(0);
-
 
         assertNull(result);
 
@@ -496,7 +480,8 @@ public class appointmentServiceTest {
         ).getPatientById(anyInt());
     }
 
-    // CREATE PATIENT - SUCCESS
+
+    // CREATE PATIENT
     @Test
     void testCreatePatientSuccess()
             throws Exception {
@@ -507,14 +492,11 @@ public class appointmentServiceTest {
         patient.setAddress("Colombo");
         patient.setPhoneNumber("0771234567");
 
-
         when(patientDAO.createPatient(patient))
                 .thenReturn(true);
 
-
         boolean result =
                 appointmentService.createPatient(patient);
-
 
         assertTrue(result);
 
@@ -522,14 +504,13 @@ public class appointmentServiceTest {
                 .createPatient(patient);
     }
 
-    // CREATE PATIENT - NULL
+
     @Test
     void testCreatePatientNull()
             throws Exception {
 
         boolean result =
                 appointmentService.createPatient(null);
-
 
         assertFalse(result);
 
@@ -539,7 +520,7 @@ public class appointmentServiceTest {
         ).createPatient(any());
     }
 
-    // CREATE PATIENT - EMPTY NAME
+
     @Test
     void testCreatePatientEmptyName()
             throws Exception {
@@ -550,10 +531,8 @@ public class appointmentServiceTest {
         patient.setAddress("Colombo");
         patient.setPhoneNumber("0771234567");
 
-
         boolean result =
                 appointmentService.createPatient(patient);
-
 
         assertFalse(result);
 
@@ -562,6 +541,7 @@ public class appointmentServiceTest {
                 never()
         ).createPatient(any());
     }
+
 
     // GET ALL TREATMENTS
     @Test
@@ -574,13 +554,11 @@ public class appointmentServiceTest {
         treatment1.setTreatmentName("Cleaning");
         treatment1.setTreatmentCost(50.00);
 
-
         Treatment treatment2 = new Treatment();
 
         treatment2.setTreatmentId(2);
         treatment2.setTreatmentName("Filling");
         treatment2.setTreatmentCost(100.00);
-
 
         List<Treatment> treatments =
                 Arrays.asList(
@@ -588,30 +566,36 @@ public class appointmentServiceTest {
                         treatment2
                 );
 
-
         when(treatmentDAO.getAllTreatments())
                 .thenReturn(treatments);
-
 
         List<Treatment> result =
                 appointmentService.getAllTreatments();
 
-
         assertNotNull(result);
 
-        assertEquals(2, result.size());
+        assertEquals(
+                2,
+                result.size()
+        );
 
         assertEquals(
                 "Cleaning",
                 result.get(0).getTreatmentName()
         );
 
+        assertEquals(
+                50.00,
+                result.get(0).getTreatmentCost(),
+                0.001
+        );
+
         verify(treatmentDAO)
                 .getAllTreatments();
     }
 
-
-    // GET TREATMENT BY ID - SUCCESS
+    
+    // GET TREATMENT BY ID
     @Test
     void testGetTreatmentByIdSuccess()
             throws Exception {
@@ -623,14 +607,11 @@ public class appointmentServiceTest {
         treatment.setDescription("Dental cleaning");
         treatment.setTreatmentCost(50.00);
 
-
         when(treatmentDAO.getTreatmentById(1))
                 .thenReturn(treatment);
 
-
         Treatment result =
                 appointmentService.getTreatmentById(1);
-
 
         assertNotNull(result);
 
@@ -645,8 +626,14 @@ public class appointmentServiceTest {
         );
 
         assertEquals(
+                "Dental cleaning",
+                result.getDescription()
+        );
+
+        assertEquals(
                 50.00,
-                result.getTreatmentCost()
+                result.getTreatmentCost(),
+                0.001
         );
 
         verify(treatmentDAO)
@@ -654,7 +641,6 @@ public class appointmentServiceTest {
     }
 
 
-    // GET TREATMENT BY ID - INVALID
     @Test
     void testGetTreatmentByIdInvalid()
             throws Exception {
@@ -662,32 +648,11 @@ public class appointmentServiceTest {
         Treatment result =
                 appointmentService.getTreatmentById(0);
 
-
         assertNull(result);
 
         verify(
                 treatmentDAO,
                 never()
         ).getTreatmentById(anyInt());
-    }
-
-    // DAO EXCEPTION
-    @Test
-    void testGetAppointmentByIdSQLException()
-            throws Exception {
-
-        when(appointmentDAO.getAppointmentById(1))
-                .thenThrow(
-                        new SQLException(
-                                "Database error"
-                        )
-                );
-
-
-        assertThrows(
-                SQLException.class,
-                () -> appointmentService
-                        .getAppointmentById(1)
-        );
     }
 }

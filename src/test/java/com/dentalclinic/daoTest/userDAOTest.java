@@ -1,13 +1,12 @@
 package com.dentalclinic.daoTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -19,10 +18,9 @@ import com.dentalclinic.model.User;
 
 public class userDAOTest {
 
-// AUTHENTICATE USER
+// AUTHENTICATE USER - SUCCESS
 @Test
-void testAuthenticateUserSuccess()
-        throws Exception {
+void testAuthenticateUserSuccess() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -57,47 +55,31 @@ void testAuthenticateUserSuccess()
     when(resultSet.getString("role"))
             .thenReturn("Receptionist");
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        User user =
-                userDAO.authenticateUser(
-                        "staff",
-                        "staff"
-                );
+        User user = userDAO.authenticateUser(
+                "staff",
+                "staff"
+        );
 
         assertNotNull(user);
 
-        assertEquals(
-                1,
-                user.getUserId()
-        );
-
-        assertEquals(
-                "staff",
-                user.getUsername()
-        );
-
-        assertEquals(
-                "Staff",
-                user.getFullName()
-        );
-
-        assertEquals(
-                "Receptionist",
-                user.getRole()
-        );
+        assertEquals(1, user.getUserId());
+        assertEquals("staff", user.getUsername());
+        assertEquals("Staff", user.getFullName());
+        assertEquals("staff@gmail.com", user.getEmail());
+        assertEquals("Receptionist", user.getRole());
     }
 }
 
+
 // AUTHENTICATE USER - INVALID
 @Test
-void testAuthenticateUserNotFound()
-        throws Exception {
+void testAuthenticateUserNotFound() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -114,27 +96,25 @@ void testAuthenticateUserNotFound()
     when(resultSet.next())
             .thenReturn(false);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        User user =
-                userDAO.authenticateUser(
-                        "wrong",
-                        "wrong"
-                );
+        User user = userDAO.authenticateUser(
+                "wrong",
+                "wrong"
+        );
 
         assertNull(user);
     }
 }
 
-// ADD USER
+
+// ADD USER - SUCCESS
 @Test
-void testAddUserSuccess()
-        throws Exception {
+void testAddUserSuccess() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -156,42 +136,30 @@ void testAddUserSuccess()
     when(statement.executeUpdate())
             .thenReturn(1);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        boolean result =
-                userDAO.addUser(user);
+        boolean result = userDAO.addUser(user);
 
         assertTrue(result);
 
-        verify(statement)
-                .setString(1, "staff");
+        verify(statement).setString(1, "staff");
+        verify(statement).setString(2, "staff");
+        verify(statement).setString(3, "Staff");
+        verify(statement).setString(4, "staff@gmail.com");
+        verify(statement).setString(5, "Receptionist");
 
-        verify(statement)
-                .setString(2, "staff");
-
-        verify(statement)
-                .setString(3, "Staff");
-
-        verify(statement)
-                .setString(4, "staff@gmail.com");
-
-        verify(statement)
-                .setString(5, "Receptionist");
-
-        verify(statement)
-                .executeUpdate();
+        verify(statement).executeUpdate();
     }
 }
 
+
 // ADD USER - FAILURE
 @Test
-void testAddUserFailure()
-        throws Exception {
+void testAddUserFailure() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -213,24 +181,22 @@ void testAddUserFailure()
     when(statement.executeUpdate())
             .thenReturn(0);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        boolean result =
-                userDAO.addUser(user);
+        boolean result = userDAO.addUser(user);
 
         assertFalse(result);
     }
 }
 
-// GET USER BY ID
+
+// GET USER BY ID - SUCCESS
 @Test
-void testGetUserById()
-        throws Exception {
+void testGetUserById() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -265,39 +231,28 @@ void testGetUserById()
     when(resultSet.getString("role"))
             .thenReturn("Admin");
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        User user =
-                userDAO.getUserById(5);
+        User user = userDAO.getUserById(5);
 
         assertNotNull(user);
 
-        assertEquals(
-                5,
-                user.getUserId()
-        );
-
-        assertEquals(
-                "admin",
-                user.getUsername()
-        );
-
-        assertEquals(
-                "Admin",
-                user.getRole()
-        );
+        assertEquals(5, user.getUserId());
+        assertEquals("admin", user.getUsername());
+        assertEquals("Admin", user.getFullName());
+        assertEquals("admin@gmail.com", user.getEmail());
+        assertEquals("Admin", user.getRole());
     }
 }
 
+
 // GET USER BY ID - NOT FOUND
 @Test
-void testGetUserByIdNotFound()
-        throws Exception {
+void testGetUserByIdNotFound() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -314,24 +269,22 @@ void testGetUserByIdNotFound()
     when(resultSet.next())
             .thenReturn(false);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        User user =
-                userDAO.getUserById(999);
+        User user = userDAO.getUserById(999);
 
         assertNull(user);
     }
 }
 
+
 // USER EXISTS
 @Test
-void testUserExists()
-        throws Exception {
+void testUserExists() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -351,15 +304,13 @@ void testUserExists()
     when(resultSet.getInt(1))
             .thenReturn(1);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        boolean exists =
-                userDAO.userExists("john123");
+        boolean exists = userDAO.userExists("john123");
 
         assertTrue(exists);
     }
@@ -368,8 +319,7 @@ void testUserExists()
 
 // USER DOES NOT EXIST
 @Test
-void testUserDoesNotExist()
-        throws Exception {
+void testUserDoesNotExist() throws Exception {
 
     Connection connection = mock(Connection.class);
     PreparedStatement statement = mock(PreparedStatement.class);
@@ -389,19 +339,18 @@ void testUserDoesNotExist()
     when(resultSet.getInt(1))
             .thenReturn(0);
 
-
     try (MockedStatic<DatabaseConnection> mocked =
                  Mockito.mockStatic(DatabaseConnection.class)) {
 
         mocked.when(DatabaseConnection::getConnection)
                 .thenReturn(connection);
 
-        boolean exists =
-                userDAO.userExists("unknown");
+        boolean exists = userDAO.userExists("unknown");
 
         assertFalse(exists);
     }
 }
+
 
 // VALIDATE USER - VALID
 @Test
@@ -423,6 +372,7 @@ void testValidUser() {
     );
 }
 
+
 // VALIDATE USER - INVALID
 @Test
 void testInvalidUser() {
@@ -437,8 +387,7 @@ void testInvalidUser() {
 }
 
 
-// VALIDATE EMAIL
-
+// VALIDATE EMAIL - VALID
 @Test
 void testValidEmail() {
 
@@ -452,6 +401,7 @@ void testValidEmail() {
 }
 
 
+// VALIDATE EMAIL - INVALID
 @Test
 void testInvalidEmail() {
 
@@ -464,7 +414,8 @@ void testInvalidEmail() {
     );
 }
 
-// VALIDATE USERNAME
+
+// VALIDATE USERNAME - VALID
 @Test
 void testValidUsername() {
 
@@ -478,6 +429,7 @@ void testValidUsername() {
 }
 
 
+// VALIDATE USERNAME - INVALID
 @Test
 void testInvalidUsername() {
 
@@ -485,7 +437,7 @@ void testInvalidUsername() {
 
     assertFalse(
             userDAO.isValidUsername(
-                    "abc"
+                    "ab"
             )
     );
 }

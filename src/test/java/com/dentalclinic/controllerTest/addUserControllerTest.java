@@ -1,6 +1,7 @@
 package com.dentalclinic.controllerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
@@ -17,575 +18,686 @@ import com.dentalclinic.controller.AddUserController;
 import com.dentalclinic.dao.UserDAO;
 import com.dentalclinic.model.User;
 
-  class TestableAddUserController extends AddUserController {
 
-  public void callDoGet(
-  HttpServletRequest request,
-  HttpServletResponse response)
-  throws Exception {
 
-   super.doGet(request, response);
- 
-  }
+// TESTABLE CONTROLLER
+class TestableAddUserController extends AddUserController {
 
-  public void callDoPost(
-  HttpServletRequest request,
-  HttpServletResponse response)
-  throws Exception {
+    public void callDoGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
 
-   super.doPost(request, response);
+        super.doGet(request, response);
+    }
 
-  }
-  }
+    public void callDoPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
 
+        super.doPost(request, response);
+    }
+}
+
+
+
+// TEST CLASS
 public class addUserControllerTest {
 
-private TestableAddUserController controller;
+    private TestableAddUserController controller;
 
-private UserDAO userDAO;
+    private UserDAO userDAO;
 
-private HttpServletRequest request;
-private HttpServletResponse response;
-private HttpSession session;
-private RequestDispatcher dispatcher;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private HttpSession session;
+    private RequestDispatcher dispatcher;
 
 
-@BeforeEach
-void setUp() throws Exception {
+    // SETUP
+    @BeforeEach
+    void setUp() throws Exception {
 
-    controller = new TestableAddUserController();
+        controller = new TestableAddUserController();
 
-    userDAO = mock(UserDAO.class);
+        userDAO = mock(UserDAO.class);
 
-    request = mock(HttpServletRequest.class);
-    response = mock(HttpServletResponse.class);
-    session = mock(HttpSession.class);
-    dispatcher = mock(RequestDispatcher.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        session = mock(HttpSession.class);
+        dispatcher = mock(RequestDispatcher.class);
 
-    
-    Field userDAOField =
-            AddUserController.class
-                    .getDeclaredField("userDAO");
 
-    userDAOField.setAccessible(true);
+        Field userDAOField =
+                AddUserController.class
+                        .getDeclaredField("userDAO");
 
-    userDAOField.set(
-            controller,
-            userDAO
-    );
+        userDAOField.setAccessible(true);
 
-    // Create logged-in Admin user.
-    User admin = new User();
+        userDAOField.set(
+                controller,
+                userDAO
+        );
 
-    admin.setUserId(1);
-    admin.setUsername("admin");
-    admin.setPassword("admin");
-    admin.setFullName("Admin");
-    admin.setEmail("admin@gmail.com");
-    admin.setRole("Admin");
 
+        // Logged-in Admin
+        User admin = new User();
 
-    when(request.getSession(false))
-            .thenReturn(session);
+        admin.setUserId(1);
+        admin.setUsername("admin");
+        admin.setPassword("admin");
+        admin.setFullName("Admin");
+        admin.setEmail("admin@gmail.com");
+        admin.setRole("Admin");
 
-    when(session.getAttribute("user"))
-            .thenReturn(admin);
+        when(request.getSession(false))
+                .thenReturn(session);
 
-    when(request.getRequestDispatcher(anyString()))
-            .thenReturn(dispatcher);
-}
+        when(request.getSession())
+                .thenReturn(session);
 
 
-// GET - ADMIN CAN ACCESS PAGE
-@Test
-void testDoGetAdminAccess()
-        throws Exception {
+        when(session.getAttribute("user"))
+                .thenReturn(admin);
 
-    controller.callDoGet(
-            request,
-            response
-    );
 
+        when(request.getRequestDispatcher(anyString()))
+                .thenReturn(dispatcher);
+    }
 
-    verify(request)
-            .getRequestDispatcher(
-                    "AddUser.jsp"
-            );
 
+    // GET - ADMIN ACCESS
+    @Test
+    void testDoGetAdminAccess()
+            throws Exception {
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
+        controller.callDoGet(
+                request,
+                response
+        );
 
 
-    verify(response, never())
-            .sendRedirect("Login.jsp");
+        verify(request)
+                .getRequestDispatcher(
+                        "AddUser.jsp"
+                );
 
 
-    verify(response, never())
-            .sendRedirect("Dashboard");
-}
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
 
-// GET - NOT LOGGED IN
-@Test
-void testDoGetNotLoggedIn()
-        throws Exception {
+        verify(response, never())
+                .sendRedirect("Login.jsp");
 
-    when(request.getSession(false))
-            .thenReturn(null);
 
+        verify(response, never())
+                .sendRedirect("Dashboard");
+    }
 
-    controller.callDoGet(
-            request,
-            response
-    );
 
+    // GET - NOT LOGGED IN
+    @Test
+    void testDoGetNotLoggedIn()
+            throws Exception {
 
-    verify(response)
-            .sendRedirect("Login.jsp");
-}
+        when(request.getSession(false))
+                .thenReturn(null);
 
 
-// GET - NON ADMIN
-@Test
-void testDoGetNonAdmin()
-        throws Exception {
+        controller.callDoGet(
+                request,
+                response
+        );
 
-    User receptionist = new User();
 
-    receptionist.setUserId(2);
-    receptionist.setUsername("reception");
-    receptionist.setRole("Receptionist");
+        verify(response)
+                .sendRedirect("Login.jsp");
 
 
-    when(session.getAttribute("user"))
-            .thenReturn(receptionist);
+        verify(request, never())
+                .getRequestDispatcher(anyString());
+    }
 
 
-    controller.callDoGet(
-            request,
-            response
-    );
+    // GET - NON ADMIN
+    @Test
+    void testDoGetNonAdmin()
+            throws Exception {
 
+        User receptionist = new User();
 
-    verify(response)
-            .sendRedirect("Dashboard");
-}
+        receptionist.setUserId(2);
+        receptionist.setUsername("reception");
+        receptionist.setRole("Receptionist");
 
 
-// POST - SUCCESS
-@Test
-void testDoPostSuccess()
-        throws Exception {
+        when(session.getAttribute("user"))
+                .thenReturn(receptionist);
 
-    when(request.getParameter("fullName"))
-            .thenReturn("Staff");
 
-    when(request.getParameter("username"))
-            .thenReturn("staff");
+        controller.callDoGet(
+                request,
+                response
+        );
 
-    when(request.getParameter("email"))
-            .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
+        verify(response)
+                .sendRedirect("Dashboard");
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
 
+        verify(request, never())
+                .getRequestDispatcher("AddUser.jsp");
+    }
 
-    when(userDAO.userExists("staff"))
-            .thenReturn(false);
 
-    when(userDAO.addUser(any(User.class)))
-            .thenReturn(true);
+    // POST - SUCCESS
+    @Test
+    void testDoPostSuccess()
+            throws Exception {
 
+        when(request.getParameter("fullName"))
+                .thenReturn("Staff");
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        when(request.getParameter("username"))
+                .thenReturn("staff");
 
+        when(request.getParameter("email"))
+                .thenReturn("staff@gmail.com");
 
-    verify(userDAO)
-            .userExists("staff");
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
-    verify(userDAO)
-            .addUser(any(User.class));
 
+        when(userDAO.userExists("staff"))
+                .thenReturn(false);
 
-    verify(response)
-            .sendRedirect("Dashboard");
+        when(userDAO.addUser(any(User.class)))
+                .thenReturn(true);
 
 
-    verify(session)
-            .setAttribute(
-                    "success",
-                    "User added successfully!"
-            );
-}
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
-// POST - REQUIRED FIELD EMPTY
-@Test
-void testDoPostEmptyRequiredField()
-        throws Exception {
+        // Username checked
+        verify(userDAO)
+                .userExists("staff");
 
-    when(request.getParameter("fullName"))
-            .thenReturn("");
 
-    when(request.getParameter("username"))
-            .thenReturn("staff");
+        // User added with correct information
+        verify(userDAO)
+                .addUser(
+                        argThat(user ->
+                                "Staff".equals(
+                                        user.getFullName()
+                                )
+                                &&
+                                "staff".equals(
+                                        user.getUsername()
+                                )
+                                &&
+                                "staff@gmail.com".equals(
+                                        user.getEmail()
+                                )
+                                &&
+                                "staff".equals(
+                                        user.getPassword()
+                                )
+                                &&
+                                "Receptionist".equals(
+                                        user.getRole()
+                                )
+                        )
+                );
 
-    when(request.getParameter("email"))
-            .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
+        // Success message stored in session
+        verify(session)
+                .setAttribute(
+                        "success",
+                        "User added successfully!"
+                );
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
 
+        // Redirect after successful registration
+        verify(response)
+                .sendRedirect("Dashboard");
 
-    controller.callDoPost(
-            request,
-            response
-    );
 
+        // No error page
+        verify(request, never())
+                .setAttribute(
+                        eq("error"),
+                        anyString()
+                );
 
-    verify(request)
-            .setAttribute(
-                    "error",
-                    "All required fields must be filled."
-            );
 
+        verify(dispatcher, never())
+                .forward(
+                        request,
+                        response
+                );
+    }
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
 
+    // POST - EMPTY REQUIRED FIELD
+    @Test
+    void testDoPostEmptyRequiredField()
+            throws Exception {
 
-    verify(userDAO, never())
-            .userExists(anyString());
+        when(request.getParameter("fullName"))
+                .thenReturn("");
 
+        when(request.getParameter("username"))
+                .thenReturn("staff");
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
+        when(request.getParameter("email"))
+                .thenReturn("staff@gmail.com");
 
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
-// POST - INVALID USERNAME
-@Test
-void testDoPostInvalidUsername()
-        throws Exception {
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
-    when(request.getParameter("fullName"))
-            .thenReturn("Staff");
 
-    when(request.getParameter("username"))
-            .thenReturn("jo");
+        controller.callDoPost(
+                request,
+                response
+        );
 
-    when(request.getParameter("email"))
-            .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
+        verify(request)
+                .setAttribute(
+                        "error",
+                        "All required fields must be filled."
+                );
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
 
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
-    controller.callDoPost(
-            request,
-            response
-    );
 
+        verify(userDAO, never())
+                .userExists(anyString());
 
-    verify(request)
-            .setAttribute(
-                    eq("error"),
-                    contains(
-                            "Username must be 3-20 characters"
-                    )
-            );
 
+        verify(userDAO, never())
+                .addUser(any(User.class));
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
 
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
 
-    verify(userDAO, never())
-            .userExists(anyString());
 
+    // POST - INVALID USERNAME
+    @Test
+    void testDoPostInvalidUsername()
+            throws Exception {
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
+        when(request.getParameter("fullName"))
+                .thenReturn("Staff");
 
+        when(request.getParameter("username"))
+                .thenReturn("jo");
 
-// POST - DUPLICATE USERNAME
-@Test
-void testDoPostDuplicateUsername()
-        throws Exception {
+        when(request.getParameter("email"))
+                .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("fullName"))
-            .thenReturn("Staff");
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
-    when(request.getParameter("username"))
-            .thenReturn("staff");
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
-    when(request.getParameter("email"))
-            .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
+        controller.callDoPost(
+                request,
+                response
+        );
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
 
+        verify(request)
+                .setAttribute(
+                        eq("error"),
+                        contains(
+                                "Username must be 3-20 characters"
+                        )
+                );
 
-    when(userDAO.userExists("staff"))
-            .thenReturn(true);
 
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
-    controller.callDoPost(
-            request,
-            response
-    );
 
+        verify(userDAO, never())
+                .userExists(anyString());
 
-    verify(request)
-            .setAttribute(
-                    "error",
-                    "Username already exists."
-            );
 
+        verify(userDAO, never())
+                .addUser(any(User.class));
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
 
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
 
-    verify(userDAO)
-            .userExists("staff");
 
+    // POST - DUPLICATE USERNAME
+    @Test
+    void testDoPostDuplicateUsername()
+            throws Exception {
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
+        when(request.getParameter("fullName"))
+                .thenReturn("Staff");
 
+        when(request.getParameter("username"))
+                .thenReturn("staff");
 
-// POST - ADD USER FAILURE
-@Test
-void testDoPostAddUserFailure()
-        throws Exception {
+        when(request.getParameter("email"))
+                .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("fullName"))
-            .thenReturn("Staff");
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
-    when(request.getParameter("username"))
-            .thenReturn("staff");
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
-    when(request.getParameter("email"))
-            .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
+        when(userDAO.userExists("staff"))
+                .thenReturn(true);
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
 
+        controller.callDoPost(
+                request,
+                response
+        );
 
-    when(userDAO.userExists("staff"))
-            .thenReturn(false);
 
-    when(userDAO.addUser(any(User.class)))
-            .thenReturn(false);
+        verify(userDAO)
+                .userExists("staff");
 
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        verify(request)
+                .setAttribute(
+                        "error",
+                        "Username already exists."
+                );
 
 
-    verify(request)
-            .setAttribute(
-                    "error",
-                    "Failed to add user."
-            );
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
+        verify(userDAO, never())
+                .addUser(any(User.class));
 
 
-    verify(userDAO)
-            .addUser(any(User.class));
-}
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
 
 
-// POST - NULL VALUES
-@Test
-void testDoPostNullValues()
-        throws Exception {
+    // POST - ADD USER FAILURE
+    @Test
+    void testDoPostAddUserFailure()
+            throws Exception {
 
-    when(request.getParameter("fullName"))
-            .thenReturn(null);
+        when(request.getParameter("fullName"))
+                .thenReturn("Staff");
 
-    when(request.getParameter("username"))
-            .thenReturn(null);
+        when(request.getParameter("username"))
+                .thenReturn("staff");
 
-    when(request.getParameter("email"))
-            .thenReturn(null);
+        when(request.getParameter("email"))
+                .thenReturn("staff@gmail.com");
 
-    when(request.getParameter("password"))
-            .thenReturn(null);
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
-    when(request.getParameter("role"))
-            .thenReturn(null);
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        when(userDAO.userExists("staff"))
+                .thenReturn(false);
 
+        when(userDAO.addUser(any(User.class)))
+                .thenReturn(false);
 
-    verify(request)
-            .setAttribute(
-                    "error",
-                    "All required fields must be filled."
-            );
 
+        controller.callDoPost(
+                request,
+                response
+        );
 
-    verify(dispatcher)
-            .forward(
-                    request,
-                    response
-            );
 
+        verify(userDAO)
+                .userExists("staff");
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
 
+        verify(userDAO)
+                .addUser(any(User.class));
 
-// POST - EMPTY EMAIL
-@Test
-void testDoPostEmptyEmail()
-        throws Exception {
 
-    when(request.getParameter("fullName"))
-            .thenReturn("Staff");
+        verify(request)
+                .setAttribute(
+                        "error",
+                        "Failed to add user."
+                );
 
-    when(request.getParameter("username"))
-            .thenReturn("staff");
 
-    when(request.getParameter("email"))
-            .thenReturn("");
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
-    when(request.getParameter("password"))
-            .thenReturn("staff");
 
-    when(request.getParameter("role"))
-            .thenReturn("Receptionist");
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
 
 
-    when(userDAO.userExists("staff"))
-            .thenReturn(false);
+    // POST - NULL VALUES
+    @Test
+    void testDoPostNullValues()
+            throws Exception {
 
-    when(userDAO.addUser(any(User.class)))
-            .thenReturn(true);
+        when(request.getParameter("fullName"))
+                .thenReturn(null);
 
+        when(request.getParameter("username"))
+                .thenReturn(null);
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        when(request.getParameter("email"))
+                .thenReturn(null);
 
+        when(request.getParameter("password"))
+                .thenReturn(null);
 
-    verify(userDAO)
-            .addUser(
-                    argThat(user ->
-                            "staff@gmail.com"
-                                    .equals(
-                                            user.getEmail()
-                                    )
-                    )
-            );
+        when(request.getParameter("role"))
+                .thenReturn(null);
 
 
-    verify(response)
-            .sendRedirect("Dashboard");
-}
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
-// POST - NON ADMIN
-@Test
-void testDoPostNonAdmin()
-        throws Exception {
+        verify(request)
+                .setAttribute(
+                        "error",
+                        "All required fields must be filled."
+                );
 
-    User receptionist = new User();
 
-    receptionist.setUserId(2);
-    receptionist.setUsername("reception");
-    receptionist.setRole("Receptionist");
+        verify(dispatcher)
+                .forward(
+                        request,
+                        response
+                );
 
 
-    when(session.getAttribute("user"))
-            .thenReturn(receptionist);
+        verify(userDAO, never())
+                .userExists(anyString());
 
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        verify(userDAO, never())
+                .addUser(any(User.class));
 
 
-    verify(response)
-            .sendRedirect("Dashboard");
+        verify(response, never())
+                .sendRedirect(anyString());
+    }
 
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
+    // POST - EMPTY EMAIL
+    @Test
+    void testDoPostEmptyEmail()
+            throws Exception {
 
-// POST - NOT LOGGED IN
-@Test
-void testDoPostNotLoggedIn()
-        throws Exception {
+        when(request.getParameter("fullName"))
+                .thenReturn("Staff");
 
-    when(request.getSession(false))
-            .thenReturn(null);
+        when(request.getParameter("username"))
+                .thenReturn("staff");
 
+        when(request.getParameter("email"))
+                .thenReturn("");
 
-    controller.callDoPost(
-            request,
-            response
-    );
+        when(request.getParameter("password"))
+                .thenReturn("staff");
 
+        when(request.getParameter("role"))
+                .thenReturn("Receptionist");
 
-    verify(response)
-            .sendRedirect("Login.jsp");
 
+        when(userDAO.userExists("staff"))
+                .thenReturn(false);
 
-    verify(userDAO, never())
-            .addUser(any(User.class));
-}
+        when(userDAO.addUser(any(User.class)))
+                .thenReturn(true);
 
+
+        controller.callDoPost(
+                request,
+                response
+        );
+
+        verify(userDAO)
+                .userExists("staff");
+
+
+        verify(userDAO)
+                .addUser(
+                        argThat(user ->
+                                "staff@gmail.com".equals(
+                                        user.getEmail()
+                                )
+                        )
+                );
+
+
+        verify(session)
+                .setAttribute(
+                        "success",
+                        "User added successfully!"
+                );
+
+
+        verify(response)
+                .sendRedirect("Dashboard");
+
+
+        verify(request, never())
+                .setAttribute(
+                        eq("error"),
+                        anyString()
+                );
+    }
+
+
+    // POST - NON ADMIN
+    @Test
+    void testDoPostNonAdmin()
+            throws Exception {
+
+        User receptionist = new User();
+
+        receptionist.setUserId(2);
+        receptionist.setUsername("reception");
+        receptionist.setRole("Receptionist");
+
+
+        when(session.getAttribute("user"))
+                .thenReturn(receptionist);
+
+
+        controller.callDoPost(
+                request,
+                response
+        );
+
+
+        verify(response)
+                .sendRedirect("Dashboard");
+
+
+        verify(userDAO, never())
+                .userExists(anyString());
+
+
+        verify(userDAO, never())
+                .addUser(any(User.class));
+    }
+
+
+    // POST - NOT LOGGED IN
+    @Test
+    void testDoPostNotLoggedIn()
+            throws Exception {
+
+        when(request.getSession(false))
+                .thenReturn(null);
+
+
+        controller.callDoPost(
+                request,
+                response
+        );
+
+
+        verify(response)
+                .sendRedirect("Login.jsp");
+
+
+        verify(userDAO, never())
+                .userExists(anyString());
+
+
+        verify(userDAO, never())
+                .addUser(any(User.class));
+    }
 }

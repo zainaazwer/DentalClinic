@@ -5,8 +5,8 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,213 +19,223 @@ import com.dentalclinic.model.User;
 
 public class dashboardControllerTest {
 
-    private TestableDashboardController controller;
+private TestableDashboardController controller;
 
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private HttpSession session;
-    private RequestDispatcher dispatcher;
+private HttpServletRequest request;
+private HttpServletResponse response;
+private HttpSession session;
+private RequestDispatcher dispatcher;
 
+// Testable subclass to access protected doGet()
+private static class TestableDashboardController
+        extends DashboardController {
 
-    // Testable subclass to access protected doGet()
-    private static class TestableDashboardController
-            extends DashboardController {
-
-        public void callDoGet(
-                HttpServletRequest request,
-                HttpServletResponse response)
-                throws ServletException, IOException {
-
-            super.doGet(request, response);
-        }
-    }
-
-
-    @BeforeEach
-    public void setUp() {
-
-        controller = new TestableDashboardController();
-
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        session = mock(HttpSession.class);
-        dispatcher = mock(RequestDispatcher.class);
-
-        when(request.getRequestDispatcher("/Dashboard.jsp"))
-                .thenReturn(dispatcher);
-    }
-
-
-    // No session redirects to Login.jsp
-    @Test
-    public void testNoSessionRedirectsToLogin()
+    public void callDoGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        when(request.getSession(false))
-                .thenReturn(null);
-
-        controller.callDoGet(request, response);
-
-        verify(response)
-                .sendRedirect("Login.jsp");
+        super.doGet(request, response);
     }
+}
 
+@BeforeEach
+public void setUp() {
 
-    // Session exists but user is not logged in
-    @Test
-    public void testNoUserInSessionRedirectsToLogin()
-            throws ServletException, IOException {
+    controller = new TestableDashboardController();
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    request = mock(HttpServletRequest.class);
+    response = mock(HttpServletResponse.class);
+    session = mock(HttpSession.class);
+    dispatcher = mock(RequestDispatcher.class);
 
-        when(session.getAttribute("user"))
-                .thenReturn(null);
+    when(request.getRequestDispatcher("/Dashboard.jsp"))
+            .thenReturn(dispatcher);
+}
 
-        controller.callDoGet(request, response);
+// NO SESSION
+@Test
+public void testNoSessionRedirectsToLogin()
+        throws ServletException, IOException {
 
-        verify(response)
-                .sendRedirect("Login.jsp");
-    }
+    when(request.getSession(false))
+            .thenReturn(null);
 
+    controller.callDoGet(request, response);
 
-    // Logged-in user is retrieved from session
-    @Test
-    public void testLoggedInUserIsRetrieved()
-            throws ServletException, IOException {
+    verify(response)
+            .sendRedirect("Login.jsp");
 
-        User user = new User();
+    verify(request, never())
+            .getRequestDispatcher("/Dashboard.jsp");
+}
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+// SESSION EXISTS BUT NO USER
+@Test
+public void testNoUserInSessionRedirectsToLogin()
+        throws ServletException, IOException {
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+    when(session.getAttribute("user"))
+            .thenReturn(null);
 
-        controller.callDoGet(request, response);
+    controller.callDoGet(request, response);
 
-        verify(session)
-                .getAttribute("user");
-    }
+    verify(response)
+            .sendRedirect("Login.jsp");
 
+    verify(request, never())
+            .getRequestDispatcher("/Dashboard.jsp");
+}
 
-    // Full name is added to request
-    @Test
-    public void testFullNameIsSet()
-            throws ServletException, IOException {
+// LOGGED-IN USER IS RETRIEVED
+@Test
+public void testLoggedInUserIsRetrieved()
+        throws ServletException, IOException {
 
-        User user = new User();
+    User user = new User();
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+    when(session.getAttribute("user"))
+            .thenReturn(user);
 
-        controller.callDoGet(request, response);
+    controller.callDoGet(request, response);
 
-        verify(request)
-                .setAttribute("fullName", "Admin");
-    }
+    // DashboardController calls getAttribute("user") twice
+    verify(session, times(2))
+            .getAttribute("user");
+}
 
+// FULL NAME IS SET
+@Test
+public void testFullNameIsSet()
+        throws ServletException, IOException {
 
-    // Role is added to request
-    @Test
-    public void testRoleIsSet()
-            throws ServletException, IOException {
+    User user = new User();
 
-        User user = new User();
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    when(session.getAttribute("user"))
+            .thenReturn(user);
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+    controller.callDoGet(request, response);
 
-        controller.callDoGet(request, response);
+    verify(request)
+            .setAttribute(
+                    "fullName",
+                    "Admin"
+            );
+}
 
-        verify(request)
-                .setAttribute("role", "Admin");
-    }
+// ROLE IS SET
+@Test
+public void testRoleIsSet()
+        throws ServletException, IOException {
 
+    User user = new User();
 
-    // Dashboard JSP is requested
-    @Test
-    public void testDashboardPageIsRequested()
-            throws ServletException, IOException {
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
-        User user = new User();
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+    when(session.getAttribute("user"))
+            .thenReturn(user);
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    controller.callDoGet(request, response);
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+    verify(request)
+            .setAttribute(
+                    "role",
+                    "Admin"
+            );
+}
 
-        controller.callDoGet(request, response);
+// DASHBOARD JSP IS REQUESTED
+@Test
+public void testDashboardPageIsRequested()
+        throws ServletException, IOException {
 
-        verify(request)
-                .getRequestDispatcher("/Dashboard.jsp");
-    }
+    User user = new User();
 
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
-    // Logged-in user is forwarded to Dashboard.jsp
-    @Test
-    public void testDashboardPageIsForwarded()
-            throws ServletException, IOException {
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        User user = new User();
+    when(session.getAttribute("user"))
+            .thenReturn(user);
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+    controller.callDoGet(request, response);
 
-        when(request.getSession(false))
-                .thenReturn(session);
+    verify(request)
+            .getRequestDispatcher("/Dashboard.jsp");
+}
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+// DASHBOARD JSP IS FORWARDED
+@Test
+public void testDashboardPageIsForwarded()
+        throws ServletException, IOException {
 
-        controller.callDoGet(request, response);
+    User user = new User();
 
-        verify(dispatcher)
-                .forward(request, response);
-    }
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
+    when(request.getSession(false))
+            .thenReturn(session);
 
-    // Admin user can access dashboard
-    @Test
-    public void testAdminCanAccessDashboard()
-            throws ServletException, IOException {
+    when(session.getAttribute("user"))
+            .thenReturn(user);
 
-        User user = new User();
+    controller.callDoGet(request, response);
 
-        user.setFullName("Admin");
-        user.setRole("Admin");
+    verify(dispatcher)
+            .forward(
+                    request,
+                    response
+            );
+}
 
-        when(request.getSession(false))
-                .thenReturn(session);
+// ADMIN CAN ACCESS DASHBOARD
+@Test
+public void testAdminCanAccessDashboard()
+        throws ServletException, IOException {
 
-        when(session.getAttribute("user"))
-                .thenReturn(user);
+    User user = new User();
 
-        controller.callDoGet(request, response);
+    user.setFullName("Admin");
+    user.setRole("Admin");
 
-        verify(response, never())
-                .sendRedirect("Login.jsp");
+    when(request.getSession(false))
+            .thenReturn(session);
 
-        verify(dispatcher)
-                .forward(request, response);
-    }
+    when(session.getAttribute("user"))
+            .thenReturn(user);
+
+    controller.callDoGet(request, response);
+
+    verify(response, never())
+            .sendRedirect("Login.jsp");
+
+    verify(dispatcher)
+            .forward(
+                    request,
+                    response
+            );
+}
+
 }

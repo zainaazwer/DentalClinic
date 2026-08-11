@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 
 import com.dentalclinic.controller.CalculateBillController;
 import com.dentalclinic.dao.BillDAO;
@@ -24,17 +24,17 @@ import com.dentalclinic.model.Bill;
 import com.dentalclinic.model.Patient;
 import com.dentalclinic.service.AppointmentService;
 
+
 public class calculateBillControllerTest {
 
     private TestableCalculateBillController controller;
 
     private AppointmentService appointmentService;
-    private BillDAO billDAO;
-    private PatientDAO patientDAO;
 
     private HttpServletRequest request;
     private HttpServletResponse response;
     private RequestDispatcher dispatcher;
+
 
     @BeforeEach
     void setUp() throws Exception {
@@ -42,8 +42,6 @@ public class calculateBillControllerTest {
         controller = new TestableCalculateBillController();
 
         appointmentService = mock(AppointmentService.class);
-        billDAO = mock(BillDAO.class);
-        patientDAO = mock(PatientDAO.class);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -53,33 +51,37 @@ public class calculateBillControllerTest {
                 .thenReturn(dispatcher);
 
 
-        Field appointmentServiceField =
+        java.lang.reflect.Field field =
                 CalculateBillController.class
                         .getDeclaredField("appointmentService");
 
-        appointmentServiceField.setAccessible(true);
+        field.setAccessible(true);
 
-        appointmentServiceField.set(
+        field.set(
                 controller,
                 appointmentService
         );
     }
 
-
-    // GET TEST
+    // GET
     @Test
     void testDoGet() throws Exception {
 
         controller.callDoGet(request, response);
 
         verify(request)
-                .getRequestDispatcher("/CalculateBill.jsp");
+                .getRequestDispatcher(
+                        "/CalculateBill.jsp"
+                );
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
     }
 
-
+    
     // POST - SUCCESS
     @Test
     void testDoPostSuccess() throws Exception {
@@ -91,7 +93,7 @@ public class calculateBillControllerTest {
                 .thenReturn("150");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CASH");
+                .thenReturn(Bill.PAYMENT_CASH);
 
 
         Appointment appointment = new Appointment();
@@ -113,26 +115,70 @@ public class calculateBillControllerTest {
         patient.setPhoneNumber("0771234567");
 
 
-        controller.callDoPost(request, response);
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(10))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
 
 
-        verify(appointmentService)
-                .getAppointmentById(1);
+            controller.callDoPost(
+                    request,
+                    response
+            );
 
 
-        verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
-
-        verify(dispatcher)
-                .forward(request, response);
+            verify(appointmentService)
+                    .getAppointmentById(1);
 
 
-        verify(request)
-                .setAttribute(
-                        eq("bill"),
-                        any(Bill.class)
-                );
+            PatientDAO patientDAO =
+                    patientMock.constructed().get(0);
+
+            verify(patientDAO)
+                    .getPatientById(10);
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            verify(request)
+                    .getRequestDispatcher(
+                            "/PrintBill.jsp"
+                    );
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
     }
+
 
     // POST - APPOINTMENT NOT FOUND
     @Test
@@ -146,7 +192,10 @@ public class calculateBillControllerTest {
                 .thenReturn(null);
 
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
         verify(appointmentService)
@@ -161,12 +210,18 @@ public class calculateBillControllerTest {
 
 
         verify(request)
-                .getRequestDispatcher("/CalculateBill.jsp");
+                .getRequestDispatcher(
+                        "/CalculateBill.jsp"
+                );
 
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
     }
+
 
     // POST - INVALID APPOINTMENT ID
     @Test
@@ -176,7 +231,10 @@ public class calculateBillControllerTest {
                 .thenReturn("abc");
 
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
         verify(request)
@@ -187,15 +245,22 @@ public class calculateBillControllerTest {
 
 
         verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
+                .getRequestDispatcher(
+                        "/PrintBill.jsp"
+                );
 
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
 
 
-        verify(appointmentService, never())
-                .getAppointmentById(anyInt());
+        verify(
+                appointmentService,
+                never()
+        ).getAppointmentById(anyInt());
     }
 
 
@@ -207,7 +272,10 @@ public class calculateBillControllerTest {
                 .thenReturn(null);
 
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
         verify(request)
@@ -218,11 +286,22 @@ public class calculateBillControllerTest {
 
 
         verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
+                .getRequestDispatcher(
+                        "/PrintBill.jsp"
+                );
 
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
+
+
+        verify(
+                appointmentService,
+                never()
+        ).getAppointmentById(anyInt());
     }
 
 
@@ -234,7 +313,10 @@ public class calculateBillControllerTest {
                 .thenReturn("");
 
 
-        controller.callDoPost(request, response);
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
         verify(request)
@@ -245,12 +327,24 @@ public class calculateBillControllerTest {
 
 
         verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
+                .getRequestDispatcher(
+                        "/PrintBill.jsp"
+                );
 
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
+
+
+        verify(
+                appointmentService,
+                never()
+        ).getAppointmentById(anyInt());
     }
+
 
     // POST - INVALID AMOUNT
     @Test
@@ -263,7 +357,7 @@ public class calculateBillControllerTest {
                 .thenReturn("abc");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CASH");
+                .thenReturn(Bill.PAYMENT_CASH);
 
 
         Appointment appointment = new Appointment();
@@ -278,26 +372,119 @@ public class calculateBillControllerTest {
                 .thenReturn(appointment);
 
 
-        controller.callDoPost(request, response);
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(PatientDAO.class)) {
+
+            controller.callDoPost(
+                    request,
+                    response
+            );
 
 
-        verify(request)
-                .setAttribute(
-                        "error",
-                        "Invalid amount entered."
-                );
+            verify(request)
+                    .setAttribute(
+                            "error",
+                            "Invalid amount entered."
+                    );
 
 
-        verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
+            verify(request)
+                    .getRequestDispatcher(
+                            "/PrintBill.jsp"
+                    );
 
 
-        verify(dispatcher)
-                .forward(request, response);
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+
+        }
     }
 
 
-    // POST - DIFFERENT TREATMENT: FILLING
+    // POST - CLEANING
+    @Test
+    void testDoPostCleaning() throws Exception {
+
+        when(request.getParameter("appointmentId"))
+                .thenReturn("1");
+
+        when(request.getParameter("amountPaid"))
+                .thenReturn("150");
+
+        when(request.getParameter("paymentMethod"))
+                .thenReturn(Bill.PAYMENT_CASH);
+
+
+        Appointment appointment = new Appointment();
+
+        appointment.setAppointmentId(1);
+        appointment.setPatientId(10);
+        appointment.setPatientName("Jenny Perera");
+        appointment.setTreatmentType("Cleaning");
+
+
+        when(appointmentService.getAppointmentById(1))
+                .thenReturn(appointment);
+
+
+        Patient patient = new Patient();
+
+        patient.setPatientId(10);
+        patient.setFullName("Jenny Perera");
+        patient.setPhoneNumber("0771234567");
+
+
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(10))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
+
+
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
+    }
+
+    // POST - FILLING
     @Test
     void testDoPostFilling() throws Exception {
 
@@ -308,7 +495,7 @@ public class calculateBillControllerTest {
                 .thenReturn("200");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CARD");
+                .thenReturn(Bill.PAYMENT_CARD);
 
 
         Appointment appointment = new Appointment();
@@ -323,18 +510,58 @@ public class calculateBillControllerTest {
                 .thenReturn(appointment);
 
 
-        controller.callDoPost(request, response);
+        Patient patient = new Patient();
+
+        patient.setPatientId(20);
+        patient.setFullName("Jenny Perera");
+        patient.setPhoneNumber("0771234567");
 
 
-        verify(request)
-                .setAttribute(
-                        eq("bill"),
-                        any(Bill.class)
-                );
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(20))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
 
 
-        verify(dispatcher)
-                .forward(request, response);
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
     }
 
     // POST - EXTRACTION
@@ -348,7 +575,7 @@ public class calculateBillControllerTest {
                 .thenReturn("250");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CASH");
+                .thenReturn(Bill.PAYMENT_CASH);
 
 
         Appointment appointment = new Appointment();
@@ -356,7 +583,6 @@ public class calculateBillControllerTest {
         appointment.setAppointmentId(3);
         appointment.setPatientId(30);
         appointment.setPatientName("Jenny Perera");
-
         appointment.setTreatmentType("Extraction");
 
 
@@ -364,19 +590,60 @@ public class calculateBillControllerTest {
                 .thenReturn(appointment);
 
 
-        controller.callDoPost(request, response);
+        Patient patient = new Patient();
+
+        patient.setPatientId(30);
+        patient.setFullName("Jenny Perera");
+        patient.setPhoneNumber("0771234567");
 
 
-        verify(request)
-                .setAttribute(
-                        eq("bill"),
-                        any(Bill.class)
-                );
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(30))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
 
 
-        verify(dispatcher)
-                .forward(request, response);
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
     }
+
 
     // POST - BRACES
     @Test
@@ -389,7 +656,7 @@ public class calculateBillControllerTest {
                 .thenReturn("500");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CARD");
+                .thenReturn(Bill.PAYMENT_CARD);
 
 
         Appointment appointment = new Appointment();
@@ -397,7 +664,6 @@ public class calculateBillControllerTest {
         appointment.setAppointmentId(4);
         appointment.setPatientId(40);
         appointment.setPatientName("Jenny Perera");
-
         appointment.setTreatmentType("Braces");
 
 
@@ -405,57 +671,60 @@ public class calculateBillControllerTest {
                 .thenReturn(appointment);
 
 
-        controller.callDoPost(request, response);
+        Patient patient = new Patient();
+
+        patient.setPatientId(40);
+        patient.setFullName("Jenny Perera");
+        patient.setPhoneNumber("0771234567");
 
 
-        verify(request)
-                .setAttribute(
-                        eq("bill"),
-                        any(Bill.class)
-                );
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(40))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
 
 
-        verify(dispatcher)
-                .forward(request, response);
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
     }
 
-    // POST - DATABASE ERROR
-    @Test
-    void testDoPostDatabaseError() throws Exception {
-
-        when(request.getParameter("appointmentId"))
-                .thenReturn("5");
-
-        when(request.getParameter("amountPaid"))
-                .thenReturn("100");
-
-        when(request.getParameter("paymentMethod"))
-                .thenReturn("CASH");
-
-
-        when(appointmentService.getAppointmentById(5))
-                .thenThrow(
-                        new SQLException("Database error")
-                );
-
-
-        controller.callDoPost(request, response);
-
-
-        verify(request)
-                .setAttribute(
-                        "error",
-                        "Database error while saving bill."
-                );
-
-
-        verify(request)
-                .getRequestDispatcher("/PrintBill.jsp");
-
-
-        verify(dispatcher)
-                .forward(request, response);
-    }
 
     // POST - UNKNOWN TREATMENT
     @Test
@@ -468,7 +737,7 @@ public class calculateBillControllerTest {
                 .thenReturn("50");
 
         when(request.getParameter("paymentMethod"))
-                .thenReturn("CASH");
+                .thenReturn(Bill.PAYMENT_CASH);
 
 
         Appointment appointment = new Appointment();
@@ -483,21 +752,195 @@ public class calculateBillControllerTest {
                 .thenReturn(appointment);
 
 
-        controller.callDoPost(request, response);
+        Patient patient = new Patient();
+
+        patient.setPatientId(60);
+        patient.setFullName("Test Patient");
+        patient.setPhoneNumber("0771234567");
+
+
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(60))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(true);
+                             })) {
+
+
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
+    }
+
+    // POST - BILL NOT SAVED
+    @Test
+    void testDoPostBillNotSaved() throws Exception {
+
+        when(request.getParameter("appointmentId"))
+                .thenReturn("7");
+
+        when(request.getParameter("amountPaid"))
+                .thenReturn("100");
+
+        when(request.getParameter("paymentMethod"))
+                .thenReturn(Bill.PAYMENT_CASH);
+
+
+        Appointment appointment = new Appointment();
+
+        appointment.setAppointmentId(7);
+        appointment.setPatientId(70);
+        appointment.setPatientName("Test Patient");
+        appointment.setTreatmentType("Cleaning");
+
+
+        when(appointmentService.getAppointmentById(7))
+                .thenReturn(appointment);
+
+
+        Patient patient = new Patient();
+
+        patient.setPatientId(70);
+        patient.setFullName("Test Patient");
+        patient.setPhoneNumber("0771234567");
+
+
+        try (MockedConstruction<PatientDAO> patientMock =
+                     mockConstruction(
+                             PatientDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.getPatientById(70))
+                                         .thenReturn(patient);
+                             });
+
+             MockedConstruction<BillDAO> billMock =
+                     mockConstruction(
+                             BillDAO.class,
+                             (mock, context) -> {
+
+                                 when(mock.createBill(any(Bill.class)))
+                                         .thenReturn(false);
+                             })) {
+
+
+            controller.callDoPost(
+                    request,
+                    response
+            );
+
+
+            verify(request)
+                    .setAttribute(
+                            "error",
+                            "Bill was not saved."
+                    );
+
+
+            verify(request)
+                    .setAttribute(
+                            eq("bill"),
+                            any(Bill.class)
+                    );
+
+
+            BillDAO billDAO =
+                    billMock.constructed().get(0);
+
+            verify(billDAO)
+                    .createBill(any(Bill.class));
+
+
+            verify(dispatcher)
+                    .forward(
+                            request,
+                            response
+                    );
+        }
+    }
+
+
+    // POST - DATABASE ERROR FROM APPOINTMENT SERVICE
+    @Test
+    void testDoPostDatabaseError() throws Exception {
+
+        when(request.getParameter("appointmentId"))
+                .thenReturn("5");
+
+        when(request.getParameter("amountPaid"))
+                .thenReturn("100");
+
+        when(request.getParameter("paymentMethod"))
+                .thenReturn(Bill.PAYMENT_CASH);
+
+
+        when(appointmentService.getAppointmentById(5))
+                .thenThrow(
+                        new SQLException("Database error")
+                );
+
+
+        controller.callDoPost(
+                request,
+                response
+        );
 
 
         verify(request)
                 .setAttribute(
-                        eq("bill"),
-                        any(Bill.class)
+                        "error",
+                        "Database error while saving bill."
+                );
+
+
+        verify(request)
+                .getRequestDispatcher(
+                        "/PrintBill.jsp"
                 );
 
 
         verify(dispatcher)
-                .forward(request, response);
+                .forward(
+                        request,
+                        response
+                );
     }
 
-    // TESTABLE SUBCLASS
+    // TESTABLE CONTROLLER
     private static class TestableCalculateBillController
             extends CalculateBillController {
 
@@ -506,7 +949,10 @@ public class calculateBillControllerTest {
                 HttpServletResponse response)
                 throws ServletException, IOException {
 
-            super.doGet(request, response);
+            super.doGet(
+                    request,
+                    response
+            );
         }
 
 
@@ -515,7 +961,10 @@ public class calculateBillControllerTest {
                 HttpServletResponse response)
                 throws ServletException, IOException {
 
-            super.doPost(request, response);
+            super.doPost(
+                    request,
+                    response
+            );
         }
     }
 }
